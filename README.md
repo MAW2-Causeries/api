@@ -6,14 +6,14 @@
 ## Version
 - Ruby 3.4.7
 - Git  2.51.2.windows.1
-- MySQL XX 
+- MySQL 8.0.44
 
 ## Installation
 Cloner le dépôt :
 
 ```bash
-git clone https://github.com/NathanChauveau/app-tracking-food.git
-cd app-tracking-food
+git clone https://github.com/MAW2-Causeries/api.git
+cd api
 ```
 Installer les gemmes :
 
