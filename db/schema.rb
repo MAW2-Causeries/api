@@ -10,5 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 0) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_10_100141) do
+  create_table "users", charset: "utf8mb3", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "phone_number"
+    t.string "profile_picture_path", null: false
+    t.string "username", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
+  end
 end
