@@ -5,6 +5,7 @@ class AddUserTable < ActiveRecord::Migration[8.1]
       t.string :email, null: false
       t.string :phone_number, null: true
       t.string :profile_picture_path, null: false # add something for default profile picture
+      t.timestamps
     end
 
     add_index :users, :username, unique: true

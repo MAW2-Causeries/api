@@ -12,9 +12,11 @@
 
 ActiveRecord::Schema[8.1].define(version: 2025_11_10_100141) do
   create_table "users", charset: "utf8mb3", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.string "email", null: false
     t.string "phone_number"
     t.string "profile_picture_path", null: false
+    t.datetime "updated_at", null: false
     t.string "username", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
