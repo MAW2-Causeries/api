@@ -18,6 +18,13 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Fix permissions
+        run: chmod +x bin/rubocop
+
+      - name: Run RuboCop
+        run: bin/rubocop -f github
+
+
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
       
