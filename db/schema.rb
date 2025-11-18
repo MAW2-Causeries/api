@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_12_135311) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_17_074008) do
   create_table "guilds", charset: "utf8mb3", force: :cascade do |t|
     t.string "banner_picture_path", null: false
     t.datetime "created_at", null: false
@@ -40,11 +40,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_135311) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sessions", charset: "utf8mb3", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
   create_table "users", charset: "utf8mb3", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
+    t.string "password_digest", null: false
     t.string "phone_number"
-    t.string "profile_picture_path", null: false
+    t.string "profile_picture_path", default: "default_profile_pic.png", null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -55,4 +65,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_135311) do
   add_foreign_key "guilds", "users", column: "owner_id"
   add_foreign_key "rooms", "guilds"
   add_foreign_key "rooms", "roomtypes", column: "type_id"
+  add_foreign_key "sessions", "users"
 end
