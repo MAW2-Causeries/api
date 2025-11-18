@@ -1,23 +1,36 @@
 module Api
   class UsersController < ApplicationController
     allow_unauthenticated_access
+        skip_before_action :verify_authenticity_token, if: -> { request.format.json? }
+
     def new
     end
 
     def register
-      user = User.new(user_params)
+            # accept both :email and :email_address from clients (forms or JSON)
+            attrs =
+        if params[:user].present?
+          user_params.to_h
+        else
+          # permit top-level keys when client sends non-nested JSON
+          params.permit(:email, :email_address, :password, :password_confirmation, :username, :profile_picture_path).to_h
+        end
+
+      user = User.new(attrs)
       if user.save
         token = generate_token(user) # token generator
         start_new_session_for(user)
-        render json: { user: user, token: token }, status: :created
+        render json: { user: { id: user.id, username: user.username, email: user.email }, token: token }, status: :ok
       else
-        render json: user.errors, status: :unprocessable_entity
+        render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
     def login
-      user = User.find_by(email: params[:email])
-      if user&.authenticate(params[:password])
+      email = params[:email]
+      password = params[:password]
+      user = User.find_by(email: email)
+      if user&.authenticate(params[password])
         token = generate_token(user)
         start_new_session_for(user)
         render json: { user: { id: user.id, username: user.username }, token: token }, status: :ok
@@ -32,6 +45,10 @@ module Api
       authenticate_user!
       current_user.sessions.destroy_all
       render json: { message: "Logged out successfully" }, status: :ok
+    end
+
+    def user_params
+      params.require(:user).permit(:email, :password, :password_confirmation, :username, :profile_picture_path)
     end
   end
 end
