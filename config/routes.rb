@@ -1,9 +1,20 @@
 Rails.application.routes.draw do
-  resources :users do
-    collection do
-      post "register"
+  namespace :api, defaults: { format: :json } do
+    resources :users, only: %i[new create show] do
+      collection do
+        get  :register,  to: "users#new", defaults: { format: :html } # testing purpose
+        post "users",  to: "users#register"
+        get  :login,     to: "users#new", defaults: { format: :html } # testing purpose
+        post :login,     to: "users#login"
+        delete :logout,  to: "sessions#destroy"
+      end
     end
+
+    resources :sessions, only: %i[new create destroy]
   end
+
+  resources :passwords, param: :token
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
