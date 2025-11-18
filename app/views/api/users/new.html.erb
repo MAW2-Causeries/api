@@ -1,0 +1,42 @@
+<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
+<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+
+<div id="form-container">
+  <div id="login-form">
+    <h2>Login</h2>
+    <%= form_with url: '/api/users/login', method: :post, scope: :user do |form| %>
+      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
+      <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %><br>
+      <%= form.submit "Sign in" %>
+    <% end %>
+    <br>
+    <%= link_to "Switch to Register", "#", onclick: "toggleForms()" %>
+  </div>
+
+  <div id="register-form" style="display: none;">
+    <h2>Register</h2>
+    <%= form_with url: 'users', method: :post, scope: :user do |form| %>
+      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
+      <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %><br>
+      <%= form.submit "Register" %>
+    <% end %>
+    <br>
+    <%= link_to "Switch to Login", "#", onclick: "toggleForms()" %>
+  </div>
+</div>
+
+<%= link_to "Forgot password?", new_password_path %>
+
+<script>
+  function toggleForms() {
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    if (loginForm.style.display === "none") {
+      loginForm.style.display = "block";
+      registerForm.style.display = "none";
+    } else {
+      loginForm.style.display = "none";
+      registerForm.style.display = "block";
+    }
+  }
+</script>
