@@ -21,7 +21,7 @@ module Api
       if user.save
         token = encode_tokenjwt({ user_id: user.id })
         start_new_session_for(user)
-        render status: :ok
+        head :ok
         #render json: { user: { id: user.id, username: user.username, email: user.email }, token: token }, status: :ok 
         #might need this later
       else

@@ -3,7 +3,6 @@ Rails.application.routes.draw do
     post "users",  to: "users#register"
     resources :users, only: %i[new show] do
       collection do
-        get  :register,  to: "users#new", defaults: { format: :html } # testing purpose
         post "users",  to: "users#register"
         get  :login,     to: "users#new", defaults: { format: :html } # testing purpose
         post :login,     to: "users#login"
