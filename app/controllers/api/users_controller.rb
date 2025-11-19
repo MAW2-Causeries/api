@@ -2,6 +2,7 @@ module Api
   class UsersController < ApplicationController
     allow_unauthenticated_access
         skip_before_action :verify_authenticity_token, if: -> { request.format.json? }
+    before_action :log_raw_body, only: %i[register login]
 
     def new
     end
@@ -13,12 +14,12 @@ module Api
           user_params.to_h
         else
           # permit top-level keys when client sends non-nested JSON
-          params.permit(:email, :email_address, :password, :password_confirmation, :username, :profile_picture_path).to_h
+          params.permit(:email, :password, :username, :profile_picture_path).to_h
         end
 
       user = User.new(attrs)
       if user.save
-        token = generate_token(user) # token generator
+        # token generator
         start_new_session_for(user)
         render json: { user: { id: user.id, username: user.username, email: user.email }, token: token }, status: :ok
       else
@@ -49,6 +50,13 @@ module Api
 
     def user_params
       params.require(:user).permit(:email, :password, :password_confirmation, :username, :profile_picture_path)
+    end
+
+
+    private def log_raw_body
+      raw = request.body.read
+      Rails.logger.info "RAW REQUEST BODY: #{raw.inspect}"
+      request.body.rewind
     end
   end
 end
