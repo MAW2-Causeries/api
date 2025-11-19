@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
-    resources :users, only: %i[new create show] do
+    post "users",  to: "users#register"
+    resources :users, only: %i[new show] do
       collection do
         get  :register,  to: "users#new", defaults: { format: :html } # testing purpose
         post "users",  to: "users#register"

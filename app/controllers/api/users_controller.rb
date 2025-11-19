@@ -1,14 +1,15 @@
 module Api
   class UsersController < ApplicationController
     allow_unauthenticated_access
-        skip_before_action :verify_authenticity_token, if: -> { request.format.json? }
+    skip_before_action :authorized, only: %i[register login], raise: false
+    skip_before_action :verify_authenticity_token, only: %i[register login], if: -> { request.format.json? }
+
     before_action :log_raw_body, only: %i[register login]
 
     def new
     end
 
     def register
-            # accept both :email and :email_address from clients (forms or JSON)
             attrs =
         if params[:user].present?
           user_params.to_h
@@ -16,12 +17,13 @@ module Api
           # permit top-level keys when client sends non-nested JSON
           params.permit(:email, :password, :username, :profile_picture_path).to_h
         end
-
       user = User.new(attrs)
       if user.save
-        # token generator
+        token = encode_tokenjwt({ user_id: user.id })
         start_new_session_for(user)
-        render json: { user: { id: user.id, username: user.username, email: user.email }, token: token }, status: :ok
+        render status: :ok
+        #render json: { user: { id: user.id, username: user.username, email: user.email }, token: token }, status: :ok 
+        #might need this later
       else
         render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
       end
