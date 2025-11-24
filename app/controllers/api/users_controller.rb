@@ -19,11 +19,12 @@ module Api
         end
       user = User.new(attrs)
       if user.save
-        token = encode_tokenjwt({ user_id: user.id })
+        # token = encode_tokenjwt({ user_id: user.id })
+        # might need this later
         start_new_session_for(user)
         head :ok
-        #render json: { user: { id: user.id, username: user.username, email: user.email }, token: token }, status: :ok 
-        #might need this later
+        # render json: { user: { id: user.id, username: user.username, email: user.email }, token: token }, status: :ok
+        # might need this later
       else
         render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
       end
@@ -33,25 +34,20 @@ module Api
       email = params[:email]
       password = params[:password]
       user = User.find_by(email: email)
-      if user&.authenticate(params[password])
-        token = generate_token(user)
+
+      if BCrypt::Password.new(user.password_digest) == password
+        token = encode_tokenjwt({ user_id: user.id })
         start_new_session_for(user)
-        render json: { user: { id: user.id, username: user.username }, token: token }, status: :ok
+        render json: { id: user.id, username: user.username, email: user.email, avatarUrl: user.profile_picture_path, token: token }, status: :ok
       elsif user
-        render json: { error: "Invalid password" }, status: :unauthorized
+        render json: { error: "Invalid password or username" }, status: :unauthorized
       else
         render json: { error: "User not found" }, status: :not_found
       end
     end
 
-    def logout
-      authenticate_user!
-      current_user.sessions.destroy_all
-      render json: { message: "Logged out successfully" }, status: :ok
-    end
-
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation, :username, :profile_picture_path)
+      params.require(:user).permit(:email, :password, :username, :profile_picture_path)
     end
 
 
