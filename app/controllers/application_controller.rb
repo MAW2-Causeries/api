@@ -1,4 +1,4 @@
-require 'jwt'
+require "jwt"
 
 class ApplicationController < ActionController::Base
   include Authentication
@@ -13,27 +13,29 @@ class ApplicationController < ActionController::Base
   end
 
   def decode_tokenjwt
-    header = request.headers['Authorization']
+    header = request.headers["Authorization"]
+    logger.debug header
     if header
+      puts header
       token = header.split(" ")[1]
       begin
-        JWT.decode(token, JWT_SECRET, true, algorithm: 'HS256')
+        JWT.decode(token, JWT_SECRET, true, algorithm: "HS256")
       rescue JWT::DecodeError
         nil
-      end 
+      end
     end
   end
 
   def current_user
     if decode_tokenjwt
-      user_id = decode_tokenjwt[0]['user_id']
+      user_id = decode_tokenjwt[0]["user_id"]
       @current_user = User.find_by(id: user_id)
     end
   end
-  
+
   def authorized
     unless !!current_user
-      render json: { message: 'Unauthorized' }, status: :unauthorized
+      render json: { message: "Unauthorized" }, status: :unauthorized
     end
   end
-end 
+end

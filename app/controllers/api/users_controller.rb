@@ -3,14 +3,12 @@ module Api
     allow_unauthenticated_access
     skip_before_action :authorized, only: %i[register login], raise: false
     skip_before_action :verify_authenticity_token, only: %i[register login], if: -> { request.format.json? }
-
-    before_action :log_raw_body, only: %i[register login]
-
+    protect_from_forgery with: :null_session,  if: -> { request.format.json? }
     def new
     end
 
     def register
-            attrs =
+        attrs =
         if params[:user].present?
           user_params.to_h
         else
@@ -21,7 +19,6 @@ module Api
       if user.save
         # token = encode_tokenjwt({ user_id: user.id })
         # might need this later
-        start_new_session_for(user)
         head :ok
         # render json: { user: { id: user.id, username: user.username, email: user.email }, token: token }, status: :ok
         # might need this later
@@ -34,9 +31,9 @@ module Api
       email = params[:email]
       password = params[:password]
       user = User.find_by(email: email)
-
-      if BCrypt::Password.new(user.password_digest) == password
+      if BCrypt::Password.new(user.password_digest) == password && user.email == email
         token = encode_tokenjwt({ user_id: user.id })
+        puts token
         start_new_session_for(user)
         render json: { id: user.id, username: user.username, email: user.email, avatarUrl: user.profile_picture_path, token: token }, status: :ok
       elsif user
@@ -48,13 +45,6 @@ module Api
 
     def user_params
       params.require(:user).permit(:email, :password, :username, :profile_picture_path)
-    end
-
-
-    private def log_raw_body
-      raw = request.body.read
-      Rails.logger.info "RAW REQUEST BODY: #{raw.inspect}"
-      request.body.rewind
     end
   end
 end

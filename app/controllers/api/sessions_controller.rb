@@ -1,17 +1,18 @@
 module Api
   class SessionsController < ApplicationController
+    allow_unauthenticated_access
     # allow_unauthenticated_access only: %i[ new create ]
     #  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_session_path, alert: "Try again later." }
 
     def new
     end
 
-    def create
-      if user = User.authenticate_by(params.permit(:email_address, :password))
-        start_new_session_for user
-        redirect_to after_authentication_url
+    def check_token
+      current_user
+      if @current_user
+        render json: { id: @current_user.id, username: @current_user.username, email: @current_user.email, avatarUrl: @current_user.profile_picture_path }, status: :ok
       else
-        redirect_to new_session_path, alert: "Try another email address or password."
+        render json: { error: "Unauthorized" }, status: :unauthorized
       end
     end
 
