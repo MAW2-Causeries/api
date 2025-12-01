@@ -13,16 +13,11 @@ class ApplicationController < ActionController::Base
   end
 
   def decode_tokenjwt
-    header = request.headers["Authorization"]
-    logger.debug header
-    if header
-      puts header
-      token = header.split(" ")[1]
-      begin
-        JWT.decode(token, JWT_SECRET, true, algorithm: "HS256")
-      rescue JWT::DecodeError
-        nil
-      end
+    header = params[:Authorization]
+    begin
+      JWT.decode(header, JWT_SECRET, true, algorithm: "HS256")
+    rescue JWT::DecodeError
+      nil
     end
   end
 

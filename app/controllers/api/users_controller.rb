@@ -34,12 +34,20 @@ module Api
       if BCrypt::Password.new(user.password_digest) == password && user.email == email
         token = encode_tokenjwt({ user_id: user.id })
         puts token
-        start_new_session_for(user)
         render json: { id: user.id, username: user.username, email: user.email, avatarUrl: user.profile_picture_path, token: token }, status: :ok
       elsif user
         render json: { error: "Invalid password or username" }, status: :unauthorized
       else
         render json: { error: "User not found" }, status: :not_found
+      end
+    end
+
+    def check_token
+      current_user
+      if @current_user
+        render json: { id: @current_user.id, username: @current_user.username, email: @current_user.email, avatarUrl: @current_user.profile_picture_path }, status: :ok
+      else
+        render json: { error: "Unauthorized" }, status: :unauthorized
       end
     end
 
