@@ -7,6 +7,7 @@ module Api
     def new
     end
 
+    # todo exception if same email/username
     def register
         attrs =
         if params[:user].present?
@@ -27,14 +28,15 @@ module Api
       end
     end
 
+    # todo redirect to error if user not exist
     def login
       email = params[:email]
       password = params[:password]
       user = User.find_by(email: email)
       if BCrypt::Password.new(user.password_digest) == password && user.email == email
-        token = encode_tokenjwt({ user_id: user.id })
+        token = encode_tokenjwt({ user_id: user.uuid })
         puts token
-        render json: { id: user.id, username: user.username, email: user.email, avatarUrl: user.profile_picture_path, token: token }, status: :ok
+        render json: { id: user.uuid, username: user.username, email: user.email, avatarUrl: user.profile_picture_path, token: token }, status: :ok
       elsif user
         render json: { error: "Invalid password or username" }, status: :unauthorized
       else
@@ -45,7 +47,7 @@ module Api
     def check_token
       current_user
       if @current_user
-        render json: { id: @current_user.id, username: @current_user.username, email: @current_user.email, avatarUrl: @current_user.profile_picture_path }, status: :ok
+        render json: { id: @current_user.uuid, username: @current_user.username, email: @current_user.email, avatarUrl: @current_user.profile_picture_path }, status: :ok
       else
         render json: { error: "Unauthorized" }, status: :unauthorized
       end

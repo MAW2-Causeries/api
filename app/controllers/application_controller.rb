@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   def current_user
     if decode_tokenjwt
       user_id = decode_tokenjwt[0]["user_id"]
-      @current_user = User.find_by(id: user_id)
+      @current_user = User.find_by(uuid: user_id)
     end
   end
 
