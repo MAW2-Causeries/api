@@ -7,7 +7,7 @@ module Api
     def new
     end
 
-    # todo exception if same email/username
+    # todo exception if same email/username -> Information for cause: Mysql2::Error (Duplicate entry 'test@uuid.cdom' for key 'users.index_users_on_email'):
     def register
         attrs =
         if params[:user].present?
@@ -18,13 +18,9 @@ module Api
         end
       user = User.new(attrs)
       if user.save
-        # token = encode_tokenjwt({ user_id: user.id })
-        # might need this later
         head :ok
-        # render json: { user: { id: user.id, username: user.username, email: user.email }, token: token }, status: :ok
-        # might need this later
       else
-        render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+        render json: { errors: "The username and/or email has already be taken" }, status: :unprocessable_entity
       end
     end
 

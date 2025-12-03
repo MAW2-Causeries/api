@@ -10,6 +10,6 @@ class User < ApplicationRecord
 
   normalizes :email, with: ->(e) { e.strip.downcase }
   validates :username, presence: true, uniqueness: true
-  validates :email, presence: true
+  validates :email, presence: true, uniqueness: true
   validates :profile_picture_path, presence: true
 end
