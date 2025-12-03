@@ -7,7 +7,6 @@ module Api
     def new
     end
 
-    # todo exception if same email/username -> Information for cause: Mysql2::Error (Duplicate entry 'test@uuid.cdom' for key 'users.index_users_on_email'):
     def register
         attrs =
         if params[:user].present?
@@ -24,19 +23,22 @@ module Api
       end
     end
 
-    # todo redirect to error if user not exist
     def login
       email = params[:email]
       password = params[:password]
       user = User.find_by(email: email)
-      if BCrypt::Password.new(user.password_digest) == password && user.email == email
-        token = encode_tokenjwt({ user_id: user.uuid })
-        puts token
-        render json: { id: user.uuid, username: user.username, email: user.email, avatarUrl: user.profile_picture_path, token: token }, status: :ok
-      elsif user
-        render json: { error: "Invalid password or username" }, status: :unauthorized
+      begin
+        BCrypt::Password.new(user.password_digest)
+      rescue NoMethodError
+        render json: { error: "Invalid password or email" }, status: :unauthorized
       else
-        render json: { error: "User not found" }, status: :not_found
+        if BCrypt::Password.new(user.password_digest) == password
+          token = encode_tokenjwt({ user_id: user.uuid })
+          puts token
+          render json: { id: user.uuid, username: user.username, email: user.email, avatarUrl: user.profile_picture_path, token: token }, status: :ok
+        else
+          render json: { error: "Invalid password or email" }, status: :unauthorized
+        end
       end
     end
 
