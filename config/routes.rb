@@ -8,8 +8,6 @@ Rails.application.routes.draw do
         post "users",  to: "users#register"
       end
     end
-
-    resources :sessions, only: %i[new destroy]
   end
 
   resources :passwords, param: :token

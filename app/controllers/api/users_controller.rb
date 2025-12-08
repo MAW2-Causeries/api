@@ -34,7 +34,6 @@ module Api
       else
         if BCrypt::Password.new(user.password_digest) == password
           token = encode_tokenjwt({ user_id: user.uuid })
-          puts token
           render json: { id: user.uuid, username: user.username, email: user.email, avatarUrl: user.profile_picture_path, token: token }, status: :ok
         else
           render json: { error: "Invalid password or email" }, status: :unauthorized
