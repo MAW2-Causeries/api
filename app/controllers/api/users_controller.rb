@@ -1,7 +1,6 @@
 module Api
   class UsersController < ApplicationController
     allow_unauthenticated_access
-    skip_before_action :authorized, only: %i[register login], raise: false
     skip_before_action :verify_authenticity_token, only: %i[register login], if: -> { request.format.json? }
     protect_from_forgery with: :null_session,  if: -> { request.format.json? }
     def new
@@ -19,7 +18,7 @@ module Api
       if user.save
         head :ok
       else
-        render json: { errors: "The username and/or email has already be taken" }, status: :unprocessable_entity
+        render json: { error: "The username and/or email has already be taken" }, status: :forbidden
       end
     end
 
@@ -46,7 +45,7 @@ module Api
       if @current_user
         render json: { id: @current_user.uuid, username: @current_user.username, email: @current_user.email, avatarUrl: @current_user.profile_picture_path }, status: :ok
       else
-        render json: { error: "Unauthorized" }, status: :unauthorized
+        render json: { error: "Authentification error: Invalid token" }, status: :unauthorized
       end
     end
 
