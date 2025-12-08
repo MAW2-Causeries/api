@@ -27,10 +27,4 @@ class ApplicationController < ActionController::Base
       @current_user = User.find_by(uuid: user_id)
     end
   end
-
-  def authorized
-    unless !!current_user
-      render json: { message: "Unauthorized" }, status: :unauthorized
-    end
-  end
 end
