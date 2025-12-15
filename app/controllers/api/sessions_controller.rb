@@ -1,12 +1,10 @@
 module Api
-  class UsersController < ApplicationController
+  class SessionsController < ApplicationController
     allow_unauthenticated_access
     skip_before_action :verify_authenticity_token, only: %i[register login], if: -> { request.format.json? }
     protect_from_forgery with: :null_session,  if: -> { request.format.json? }
-    def new
-    end
 
-    def register
+    def new
         attrs =
         if params[:user].present?
           user_params.to_h
@@ -22,7 +20,7 @@ module Api
       end
     end
 
-    def login
+    def create
       email = params[:email]
       password = params[:password]
       user = User.find_by(email: email)
@@ -33,17 +31,17 @@ module Api
       else
         if BCrypt::Password.new(user.password_digest) == password
           token = encode_tokenjwt({ user_id: user.uuid })
-          render json: { id: user.uuid, username: user.username, email: user.email, avatarUrl: user.profile_picture_path, token: token }, status: :ok
+          render json: { user: user.to_json, token: token }, status: :ok
         else
           render json: { error: "Invalid password or email" }, status: :unauthorized
         end
       end
     end
 
-    def check_token
+    def index
       current_user
       if @current_user
-        render json: { id: @current_user.uuid, username: @current_user.username, email: @current_user.email, avatarUrl: @current_user.profile_picture_path }, status: :ok
+        render json: @current_user.to_json, status: :ok
       else
         render json: { error: "Authentification error: Invalid token" }, status: :unauthorized
       end
