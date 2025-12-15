@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
-    post "users",  to: "users#register"
-    post "sessions",     to: "users#login"
-    get "sessions", to: "users#check_token"
-    resources :users, only: %i[new show] do
+    resources :sessions, only: %i[new create index destroy] do
       collection do
-        post "users",  to: "users#register"
+        delete to: "sessions#destroy"
+        get  to: "sessions#index"
+        post to: "sessions#create"
+        post "new",  to: "sessions#new"
       end
     end
   end
