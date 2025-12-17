@@ -11,9 +11,6 @@ class PasswordsController < ApplicationController
     redirect_to new_session_path, notice: "Password reset instructions sent (if user with that email address exists)."
   end
 
-  def edit
-  end
-
   def update
     if @user.update(params.permit(:password, :password_confirmation))
       @user.sessions.destroy_all

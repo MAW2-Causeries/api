@@ -49,10 +49,13 @@ module Api
     end
   end
 
-  def index
+  def show
   end
 
   def create
+  end
+
+  def update
   end
 
   def destroy

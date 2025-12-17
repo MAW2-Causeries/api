@@ -1,16 +1,9 @@
 Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
-    resources :sessions, only: %i[new create index destroy] do
-      collection do
-        delete to: "sessions#destroy"
-        get  to: "sessions#index"
-        post to: "sessions#create"
-        post "new",  to: "sessions#new"
-      end
-    end
+    resources :sessions, only: %i[create index destroy]
+    resources :users, only: %i[show update create destroy]
+    resources :passwords, only: %i[create update]
   end
-
-  resources :passwords, param: :token
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
