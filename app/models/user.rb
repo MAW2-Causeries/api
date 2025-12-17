@@ -3,6 +3,11 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   before_save :generate_uuid, unless: :uuid?
 
+
+  def as_json
+    super(only: [ :uuid, :email, :profile_picture_path, :username ])
+  end
+
   private
   def generate_uuid
     self.uuid = SecureRandom.uuid

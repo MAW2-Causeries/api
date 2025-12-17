@@ -2,8 +2,9 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     resources :sessions, only: %i[create index destroy]
     resources :users, only: %i[show update create destroy]
-    resources :passwords, only: %i[create update]
   end
+
+  resources :passwords, param: :token
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
