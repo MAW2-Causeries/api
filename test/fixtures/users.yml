@@ -1,0 +1,14 @@
+<% password_digest = BCrypt::Password.create("test") %>
+
+
+one:
+  email: test@test.com
+  username: blablabla
+  password_digest: <%= password_digest %>
+  profile_picture_path: default_profile_pic.png
+
+two:
+  email: teste@test.com
+  username: blablablae
+  password_digest: <%= password_digest %>
+  profile_picture_path: default_profile_pic.png
