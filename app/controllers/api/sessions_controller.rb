@@ -1,9 +1,6 @@
 module Api
   class SessionsController < ApplicationController
-    allow_unauthenticated_access
-    skip_before_action :verify_authenticity_token, only: %i[register login], if: -> { request.format.json? }
-    protect_from_forgery with: :null_session,  if: -> { request.format.json? }
-
+    protect_from_forgery with: :null_session
     def new
         attrs =
         if params[:user].present?
