@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   pull_request:
   push:
-    branches: [ '*' ]
+    branches: [ main ]
 
 jobs:
   scan_ruby:
@@ -23,8 +23,7 @@ jobs:
         run: chmod +x bin/rubocop
 
       - name: Run RuboCop
-        run: bin/rubocop -f github
-
+        run: bundle exec rubocop -f github
 
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bundle exec brakeman --no-pager
@@ -79,11 +78,10 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_HOST: 127.0.0.1
-          MYSQL_DB: api_test
+          MYSQL_DATABASE: api_test
           MYSQL_USER: TestUser
-          MYSQL_ALLOW_EMPTY_PASSWORD: no
           MYSQL_PASSWORD: testtest
+          MYSQL_ROOT_PASSWORD: root
         ports:
           - "3306:3306"
     #  redis:
@@ -104,6 +102,8 @@ jobs:
         env:
           RAILS_ENV: test
           DATABASE_PORT: 3306
+          USER_TEST: TestUser
+          DATABASE_PASSWORD_TEST: testtest
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           # REDIS_URL: redis://localhost:6379/0
         run: | 
