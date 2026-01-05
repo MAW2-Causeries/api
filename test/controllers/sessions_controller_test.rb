@@ -10,9 +10,10 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   setup { @user = User.take }
 
   test "login_success" do
+    # rewrite route
     post "/api/sessions", params: { email: "test@test.com", password: "test" }
     response = JSON.parse(@response.body)
-    assert_equal users(:one).username, response["username"]
+    assert_equal users(:one).username, response["user"]["username"]
   end
 
     test "login_failure_wrong_input" do
