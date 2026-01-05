@@ -17,8 +17,8 @@ test:
   database: api_test
   host: 127.0.0.1
   port: 3306
-  username: root
-  password: <%= ENV['DATABASE_PASSWORD'] %>
+  username: <%= ENV['USER_TEST'] %>
+  password: <%= ENV['DATABASE_PASSWORD_TEST'] %>
   
 
 production:
