@@ -46,7 +46,8 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     get "/api/sessions", params: { Authorization: token }
     response = JSON.parse(@response.body)
 
-    assert_equal users(:two).username, response
+    assert_equal users(:two).username, response["username"]
+    assert_equal token, response["username"]
   end
 
   test "check_token_failure_not_found" do
