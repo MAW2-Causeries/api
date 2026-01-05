@@ -78,6 +78,7 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
+          MYSQL_HOST: 127.0.0.1
           MYSQL_DATABASE: api_test
           MYSQL_USER: TestUser
           MYSQL_PASSWORD: testtest

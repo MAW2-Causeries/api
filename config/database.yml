@@ -15,7 +15,7 @@ development:
 test:
   <<: *default
   database: api_test
-  host: mysql
+  host: 127.0.0.1
   username: <%= ENV['USER_TEST'] %>
   password: <%= ENV['DATABASE_PASSWORD_TEST'] %>
   
