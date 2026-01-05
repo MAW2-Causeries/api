@@ -75,8 +75,17 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-
-    # services:
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_DB: api_test
+          MYSQL_USER: TestUser
+          MYSQL_ALLOW_EMPTY_PASSWORD: no
+          MYSQL_PASSWORD: testtest
+        ports:
+          - "3306:3306"
     #  redis:
     #    image: valkey/valkey:8
     #    ports:
@@ -94,10 +103,10 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
+          DATABASE_PORT: 3306
           # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           # REDIS_URL: redis://localhost:6379/0
         run: | 
-          sudo service mysql start
           bundle exec rails db:test:prepare test
 
   system-test:
