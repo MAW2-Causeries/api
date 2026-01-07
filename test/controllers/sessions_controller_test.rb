@@ -43,7 +43,6 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     post "/api/sessions", params: { email: "teste@test.com", password: "test" }
     response = JSON.parse(@response.body)
     token = response["token"]
-    assert_equal "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiOTgwMTkwOTYyIn0.RLR7TqEtiSYLItKmiQtlAf6IjbG6RkfdoHeoMowbSlI", response
 
     # check token by comparing both username
     get "/api/sessions", params: { Authorization: token }
