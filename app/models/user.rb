@@ -1,6 +1,5 @@
 class User < ApplicationRecord
   has_secure_password
-  has_many :sessions, dependent: :destroy
   before_save :generate_uuid, unless: :uuid?
 
 

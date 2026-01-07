@@ -28,14 +28,14 @@ module Api
         render json: { error: "Authentification error: Invalid token" }, status: :unauthorized
       end
     end
-
+    # logout
     def destroy # need to test
-      render json: @token = nil, status: :ok
+      @token = nil
+      render json: { token: @token }, status: :ok
     end
 
     def user_params
       params.require(:user).permit(:email, :password, :username, :profile_picture_path)
     end
   end
-  # logout
 end

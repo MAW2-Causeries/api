@@ -4,8 +4,12 @@ module Api
 
   # get the specific user id and send back datas
   def show
-    user = User.find_by(uuid: params[:id])
-    render json: user.as_json, status: :ok
+    begin
+      user = User.find_by!(uuid: params[:id])
+      render json: user.as_json, status: :ok
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "The user doesn't exist" }, status: :not_found
+    end
   end
 
   # register
@@ -30,20 +34,20 @@ module Api
     password_digest = BCrypt::Password.create(params[:password]) # redo make pw
     profile_picture_path = params[:profile_picture_path]
     user = User.find_by(uuid: params[:id])
-
-    if user.update_columns({ username: username, profile_picture_path: profile_picture_path, password_digest: password_digest })
+    begin
+      user.update_columns({ username: username, profile_picture_path: profile_picture_path, password_digest: password_digest })
       head :ok
-    else
-      render json: { error: "The user couldn't be updated" }, status: :internal_server_error
+    rescue NoMethodError
+      render json: { error: "The user couldn't be updated" }, status: :not_found
     end
   end
-  # kill
+  # kill the user
   def destroy
-    user = User.find_by(uuid: params[:id])
-    if user.destroy
+    begin
+      User.find_by!(uuid: params[:id]).destroy
       head :ok
-    else
-      render json: { error: "The user couldn't be delete" }, status: :internal_server_error
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "The user couldn't be delete" }, status: :not_found
     end
   end
 
