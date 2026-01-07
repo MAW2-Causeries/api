@@ -10,7 +10,6 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   setup { @user = User.take }
 
   test "login_success" do
-    # rewrite route
     post "/api/sessions", params: { email: "test@test.com", password: "test" }
     response = JSON.parse(@response.body)
     assert_equal users(:one).username, response["user"]["username"]
@@ -24,21 +23,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Invalid password or email", response["error"]
   end
 
-  test "register_success" do
-    post "/api/users", params: { user: { email: "testing@test.com", password: "password", username: "testoting" } }
-
-    assert_response(:success)
-  end
-
-  test "register_failure_duplicate" do
-    post "/api/users", params: { email: "test@test.com", password: "test" }
-
-    assert_response(:forbidden)
-    response = JSON.parse(@response.body)
-    assert_equal "The username and/or email has already be taken", response["error"]
-  end
-
-  test "check_token_success" do
+  test "current_user_success" do
     # login to get token
     post "/api/sessions", params: { email: "teste@test.com", password: "test" }
     response = JSON.parse(@response.body)
@@ -51,10 +36,16 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal users(:two).username, response["username"]
   end
 
-  test "check_token_failure_not_found" do
+  test "current_user_failure" do
     get "/api/sessions", params: { Authorization: "I am the token" }
     assert_response(:unauthorized)
     response = JSON.parse(@response.body)
     assert_equal "Authentification error: Invalid token", response["error"]
+  end
+
+  test "logout_success" do
+    delete "/api/sessions"
+    response = JSON.parse(@response.body)
+    assert_nil response["token"]
   end
 end

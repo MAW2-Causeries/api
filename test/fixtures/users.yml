@@ -2,13 +2,29 @@
 
 
 one:
+  uuid: 500a75db-1486-4719-bbb8-776e4cbebde1
   email: test@test.com
   username: blablabla
   password_digest: <%= password_digest %>
   profile_picture_path: default_profile_pic.png
 
 two:
+  uuid: 501a75db-1486-4719-bbb8-776e4cbebde1
   email: teste@test.com
   username: blablablae
+  password_digest: <%= password_digest %>
+  profile_picture_path: default_profile_pic.png
+
+three:
+  uuid: 502a75db-1486-4719-bbb8-776e4cbebde1
+  email: testeing@test.com
+  username: blablablaeee
+  password_digest: <%= password_digest %>
+  profile_picture_path: default_profile_pic.png
+
+four:
+  uuid: 503a75db-1486-4719-bbb8-776e4cbebde1
+  email: testeing@testion.com
+  username: blabooblo
   password_digest: <%= password_digest %>
   profile_picture_path: default_profile_pic.png
