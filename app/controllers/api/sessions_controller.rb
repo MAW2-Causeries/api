@@ -31,8 +31,7 @@ module Api
     end
     # logout
     def destroy # need to test
-      @token = nil
-      render json: { token: @token }, status: :ok
+      render body: nil, status: :ok
     end
 
     def user_params
