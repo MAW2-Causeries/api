@@ -12,7 +12,7 @@ module Api
         render json: { error: "Invalid password or email" }, status: :unauthorized
       else
         if BCrypt::Password.new(user.password_digest) == password
-          @token = encode_tokenjwt({ user_id: user.uuid })
+          @token = helpers.encode_tokenjwt({ user_id: user.uuid })
           render json: { user: user.as_json, token: @token }, status: :ok
         else
           render json: { error: "Invalid password or email" }, status: :unauthorized
@@ -21,11 +21,12 @@ module Api
     end
     # return the current logged user
     def index
-      current_user
-      if @current_user
-        render json: @current_user.as_json, status: :ok
-      else
+      begin
+        current_user= User.find_by(uuid: helpers.decode_tokenjwt[0]["user_id"])
+      rescue NoMethodError
         render json: { error: "Authentification error: Invalid token" }, status: :unauthorized
+      else
+        render json: current_user.as_json, status: :ok
       end
     end
     # logout
