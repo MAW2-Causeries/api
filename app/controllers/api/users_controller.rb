@@ -39,6 +39,7 @@ module Api
       render json: InvalideUserData.new, status: :unprocessable_entity
     end
   end
+
   # kill the user
   def destroy
     begin

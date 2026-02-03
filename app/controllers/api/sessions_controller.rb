@@ -1,11 +1,13 @@
 module Api
   class SessionsController < ApplicationController
     protect_from_forgery with: :null_session
+
     # login
     def create
       email = params[:email]
       password = params[:password]
       user = User.find_by(email: email)
+
       begin
         user.temporary_password(user.password_digest)
       rescue NoMethodError
@@ -19,6 +21,7 @@ module Api
         end
       end
     end
+
     # return the current logged user
     def index
       begin
@@ -29,6 +32,7 @@ module Api
         render json: current_user.as_json, status: :ok
       end
     end
+
     # logout
     def destroy # need to test
       render body: nil, status: :ok

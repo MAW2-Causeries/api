@@ -1,11 +1,6 @@
 require "test_helper"
 
 class SessionsControllerTest < ActionDispatch::IntegrationTest
-  # test "the truth" do
-  #   assert true
-  # end
-  #
-  # todo : réaliser les tests de login/register et check_token avec les failures possibles -> https://guides.rubyonrails.org/testing.html#maintaining-the-test-database-schema
   require "test_helper"
   setup { @user = User.take }
 
