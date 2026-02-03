@@ -7,11 +7,11 @@ module Api
       password = params[:password]
       user = User.find_by(email: email)
       begin
-        BCrypt::Password.new(user.password_digest)
+        user.temporary_password(user.password_digest)
       rescue NoMethodError
         render json: { error: "Invalid password or email" }, status: :unauthorized
       else
-        if BCrypt::Password.new(user.password_digest) == password
+        if user.temporary_password(user.password_digest) == password
           @token = helpers.encode_tokenjwt({ user_id: user.uuid })
           render json: { user: user.as_json, token: @token }, status: :ok
         else

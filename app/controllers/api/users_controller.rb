@@ -34,8 +34,9 @@ module Api
     password_digest = BCrypt::Password.create(params[:password]) # redo make pw
     profile_picture_path = params[:profile_picture_path]
     user = User.find_by(uuid: params[:id])
+
     begin
-      user.update_columns({ username: username, profile_picture_path: profile_picture_path, password_digest: password_digest })
+      user.update_columns({ username: params[:username], profile_picture_path: params[:profile_picture_path], password_digest: user.generate_password(params[:password]) })
       head :ok
     rescue NoMethodError
       render json: { error: "The user couldn't be updated" }, status: :not_found

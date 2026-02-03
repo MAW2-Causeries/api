@@ -7,6 +7,14 @@ class User < ApplicationRecord
     super(only: [ :uuid, :email, :profile_picture_path, :username ])
   end
 
+  def temporary_password(password)
+    BCrypt::Password.new(password)
+  end
+
+  def generate_password(password)
+    BCrypt::Password.create(password)
+  end
+
   private
   def generate_uuid
     self.uuid = SecureRandom.uuid
