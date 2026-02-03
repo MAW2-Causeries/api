@@ -34,7 +34,7 @@ module Api
     end
 
     # logout
-    def destroy # need to test
+    def destroy
       render body: nil, status: :ok
     end
 
