@@ -8,7 +8,7 @@ module Api
       user = User.find_by!(uuid: params[:id])
       render json: user.as_json, status: :ok
     rescue ActiveRecord::RecordNotFound
-      render json: { error: "The user doesn't exist" }, status: :not_found
+      render json: UserNotFound.new, status: :not_found
     end
   end
 
@@ -30,16 +30,13 @@ module Api
   end
   # update specific user id
   def update
-    username = params[:username]
-    password_digest = BCrypt::Password.create(params[:password]) # redo make pw
-    profile_picture_path = params[:profile_picture_path]
     user = User.find_by(uuid: params[:id])
 
     begin
       user.update_columns({ username: params[:username], profile_picture_path: params[:profile_picture_path], password_digest: user.generate_password(params[:password]) })
       head :ok
     rescue NoMethodError
-      render json: { error: "The user couldn't be updated" }, status: :not_found
+      render json: InvalideUserData.new, status: :unprocessable_entity
     end
   end
   # kill the user
@@ -48,7 +45,7 @@ module Api
       User.find_by!(uuid: params[:id]).destroy
       head :ok
     rescue ActiveRecord::RecordNotFound
-      render json: { error: "The user couldn't be delete" }, status: :not_found
+      render json: UserNotFound.new, status: :not_found
     end
   end
 

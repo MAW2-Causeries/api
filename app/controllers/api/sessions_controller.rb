@@ -9,7 +9,7 @@ module Api
       begin
         user.temporary_password(user.password_digest)
       rescue NoMethodError
-        render json: { error: "Invalid password or email" }, status: :unauthorized
+        render json: InvalideUserData.new, status: :unauthorized
       else
         if user.temporary_password(user.password_digest) == password
           @token = helpers.encode_tokenjwt({ user_id: user.uuid })
@@ -24,7 +24,7 @@ module Api
       begin
         current_user= User.find_by(uuid: helpers.decode_tokenjwt[0]["user_id"])
       rescue NoMethodError
-        render json: { error: "Authentification error: Invalid token" }, status: :unauthorized
+        render json: UserNotFound.new("Invalid token"), status: :unauthorized
       else
         render json: current_user.as_json, status: :ok
       end
