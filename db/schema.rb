@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_05_134423) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_05_151105) do
   create_table "channels", primary_key: "uuid", id: { type: :string, limit: 36 }, charset: "utf8mb3", force: :cascade do |t|
     t.string "category"
     t.datetime "created_at", null: false
     t.string "description"
-    t.bigint "guild_id", null: false
+    t.string "guild_id", limit: 36, null: false
     t.string "name"
     t.datetime "updated_at", null: false
     t.index ["guild_id"], name: "index_channels_on_guild_id"
@@ -45,6 +45,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_134423) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "channels", "guilds", primary_key: "uuid"
   add_foreign_key "guilds", "users", column: "creator_id", primary_key: "uuid"
   add_foreign_key "guilds", "users", column: "owner_id", primary_key: "uuid"
 end
