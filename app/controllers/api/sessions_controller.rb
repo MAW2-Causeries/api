@@ -9,11 +9,11 @@ module Api
       user = User.find_by(email: email)
 
       begin
-        user.temporary_password(user.password_digest)
+        user.load_password_hash(user.password_digest)
       rescue NoMethodError
         render json: InvalideUserData.new, status: :unauthorized
       else
-        if user.temporary_password(user.password_digest) == password
+        if user.load_password_hash(user.password_digest) == password
           @token = helpers.encode_tokenjwt({ user_id: user.uuid })
           render json: { user: user.as_json, token: @token }, status: :ok
         else

@@ -6,11 +6,11 @@ class User < ApplicationRecord
     super(only: [ :uuid, :email, :profile_picture_path, :username ])
   end
 
-  def temporary_password(password)
+  def load_password_hash(password)
     BCrypt::Password.new(password)
   end
 
-  def generate_password(password)
+  def encode_password(password)
     BCrypt::Password.create(password)
   end
 
