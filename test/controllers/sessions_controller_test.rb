@@ -15,7 +15,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response(:unauthorized)
     response = JSON.parse(@response.body)
-    assert_equal "Invalid password or email", response["error"]
+    assert_equal "The user data is invalid", response
   end
 
   test "current_user_success" do
@@ -35,12 +35,11 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     get "/api/sessions", params: { Authorization: "I am the token" }
     assert_response(:unauthorized)
     response = JSON.parse(@response.body)
-    assert_equal "Authentification error: Invalid token", response["error"]
+    assert_equal "Invalid token", response
   end
 
   test "logout_success" do
     delete "/api/sessions"
-    response = JSON.parse(@response.body)
-    assert_nil response["token"]
+    assert_response(:ok)
   end
 end

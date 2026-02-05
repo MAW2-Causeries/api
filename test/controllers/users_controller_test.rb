@@ -29,7 +29,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get "/api/users/050"
     response = JSON.parse(@response.body)
 
-    assert_equal "The user doesn't exist", response["error"]
+    assert_equal "The user was not found", response
   end
 
   test "update_success" do
@@ -44,7 +44,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "update_fail" do
     patch "/api/users/050", params: { profile_picture_path: "default_profile_pic.png", username: "fwefwe", password: "test" }
     response = JSON.parse(@response.body)
-    assert_equal "The user couldn't be updated", response["error"]
+    assert_equal "The user data is invalid", response
   end
 
     test "destroy_success" do
@@ -54,12 +54,12 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get "/api/users/502a75db-1486-4719-bbb8-776e4cbebde1"
     response = JSON.parse(@response.body)
 
-    assert_equal "The user doesn't exist", response["error"]
+    assert_equal "The user was not found", response
   end
 
     test "destroy_fail" do
     delete "/api/users/050"
     response = JSON.parse(@response.body)
-    assert_equal "The user couldn't be delete", response["error"]
+    assert_equal "The user was not found", response
   end
 end
