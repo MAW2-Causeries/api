@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_12_130144) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_12_132343) do
   create_table "channels", primary_key: "uuid", id: { type: :string, limit: 36 }, charset: "utf8mb3", force: :cascade do |t|
-    t.string "category"
+    t.string "category", null: false
     t.datetime "created_at", null: false
     t.string "description"
     t.string "guild_id", limit: 36
-    t.string "name"
+    t.string "name", null: false
     t.datetime "updated_at", null: false
     t.index ["guild_id"], name: "index_channels_on_guild_id"
   end
@@ -43,6 +43,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_130144) do
     t.string "username", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
+    t.index ["uuid"], name: "index_users_on_uuid", unique: true
   end
 
   add_foreign_key "channels", "guilds", primary_key: "uuid"
