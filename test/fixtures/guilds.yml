@@ -1,0 +1,29 @@
+one:
+  created_at: <%= Time.now %>
+  updated_at: <%= Time.now %>
+  description: This is a test guild
+  name: Test Guild
+  owner_id: 500a75db-1486-4719-bbb8-776e4cbebde1
+  creator_id: 500a75db-1486-4719-bbb8-776e4cbebde1
+  uuid: 600a75db-1486-4719-bbb8-776e4cbebde1
+  banner_path: default_banner.png
+
+two:
+  created_at: <%= Time.now %>
+  updated_at: <%= Time.now %>
+  description: yup
+  name: TG2
+  owner_id: 501a75db-1486-4719-bbb8-776e4cbebde1
+  creator_id: 501a75db-1486-4719-bbb8-776e4cbebde1
+  uuid: 601a75db-1486-4719-bbb8-776e4cbebde1
+  banner_path: default_banner.png
+
+three:
+  created_at: <%= Time.now %>
+  updated_at: <%= Time.now %>
+  description: again
+  name: GT3
+  owner_id: 503a75db-1486-4719-bbb8-776e4cbebde1
+  creator_id: 503a75db-1486-4719-bbb8-776e4cbebde1
+  uuid: 602a75db-1486-4719-bbb8-776e4cbebde1
+  banner_path: default_banner.png
