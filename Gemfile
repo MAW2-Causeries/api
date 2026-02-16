@@ -68,6 +68,6 @@ end
 
 gem "dotenv-rails"
 gem "fiddle"
-gem "jwt", "~> 2.5"
+gem "jwt", "~> 3.1"
 gem "rack-cors"
 gem "active_model_serializers", "~> 0.10.15"
