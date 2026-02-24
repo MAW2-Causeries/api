@@ -6,7 +6,7 @@ one:
   owner_id: 500a75db-1486-4719-bbb8-776e4cbebde1
   creator_id: 500a75db-1486-4719-bbb8-776e4cbebde1
   uuid: 600a75db-1486-4719-bbb8-776e4cbebde1
-  banner_path: default_banner.png
+  banner_picture_path: default_banner.png
 
 two:
   created_at: <%= Time.now %>
@@ -16,7 +16,7 @@ two:
   owner_id: 501a75db-1486-4719-bbb8-776e4cbebde1
   creator_id: 501a75db-1486-4719-bbb8-776e4cbebde1
   uuid: 601a75db-1486-4719-bbb8-776e4cbebde1
-  banner_path: default_banner.png
+  banner_picture_path: default_banner.png
 
 three:
   created_at: <%= Time.now %>
@@ -26,4 +26,4 @@ three:
   owner_id: 503a75db-1486-4719-bbb8-776e4cbebde1
   creator_id: 503a75db-1486-4719-bbb8-776e4cbebde1
   uuid: 602a75db-1486-4719-bbb8-776e4cbebde1
-  banner_path: default_banner.png
+  banner_picture_path: default_banner.png

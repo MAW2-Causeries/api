@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  has_many :guilds, foreign_key: :owner_id, primary_key: :uuid
+  has_many :guilds, foreign_key: :creator_id, primary_key: :uuid
   has_secure_password
   before_save :generate_uuid, unless: :uuid?
 

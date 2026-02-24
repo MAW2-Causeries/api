@@ -13,8 +13,8 @@ class Guild < ApplicationRecord
     self.uuid = SecureRandom.uuid
   end
 
-  validate :name, presence: true, uniqueness: true
-  validate :banner_picture_path, presence: true
-  validate :creator_id, presence: true
-  validate :owner_id, presence: true
+  validates :name, presence: true, uniqueness: true
+  validates :banner_picture_path, presence: true
+  validates :creator_id, presence: true
+  validates :owner_id, presence: true
 end
