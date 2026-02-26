@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_12_132343) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_25_130016) do
   create_table "channels", primary_key: "uuid", id: { type: :string, limit: 36 }, charset: "utf8mb3", force: :cascade do |t|
     t.string "category", null: false
     t.datetime "created_at", null: false
@@ -18,7 +18,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_132343) do
     t.string "guild_id", limit: 36
     t.string "name", null: false
     t.datetime "updated_at", null: false
+    t.index ["guild_id", "name", "category"], name: "channels_unique", unique: true
     t.index ["guild_id"], name: "index_channels_on_guild_id"
+    t.index ["name", "guild_id", "category", "uuid"], name: "index_channels_on_name_and_guild_id_and_category_and_uuid", unique: true
   end
 
   create_table "guilds", primary_key: "uuid", id: { type: :string, limit: 36 }, charset: "utf8mb3", force: :cascade do |t|
@@ -30,6 +32,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_132343) do
     t.string "owner_id", limit: 36, null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_guilds_on_creator_id"
+    t.index ["name"], name: "index_guilds_on_name", unique: true
     t.index ["owner_id"], name: "index_guilds_on_owner_id"
   end
 
@@ -46,7 +49,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_12_132343) do
     t.index ["uuid"], name: "index_users_on_uuid", unique: true
   end
 
-  add_foreign_key "channels", "guilds", primary_key: "uuid"
   add_foreign_key "guilds", "users", column: "creator_id", primary_key: "uuid"
   add_foreign_key "guilds", "users", column: "owner_id", primary_key: "uuid"
 end

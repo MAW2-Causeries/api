@@ -1,43 +1,48 @@
 module Api
   class ChannelsController < ApplicationController
-      protect_from_forgery with: :null_session
+    protect_from_forgery with: :null_session
 
     def show
       begin
         channel = Channel.find_by!(uuid: params[:id])
         render json: channel.as_json, status: :ok
       rescue ActiveRecord::RecordNotFound
-        render json: ChannelNotFound.new, status: :not_found #todo
+        render json: ChannelNotFound.new, status: :not_found
       end
-    end 
+    end
 
     def create
-        attrs = channel_params.to_h
+      attrs = channel_params.to_h
       channel = Channel.new(attrs)
-      if channel.save
+      logger.debug "Creating channel with attributes: #{channel.inspect}"
+      begin
+        channel.save!
         head :ok
-      else
-        render json: { error: "The channel couldn't be create" }, status: :forbidden
+      rescue ActiveRecord::InvalidForeignKey
+        render json: GuildNotFound.new, status: :unprocessable_entity
+      rescue ActiveRecord::RecordInvalid
+        render json: DuplicateChannel.new, status: :unprocessable_entity
       end
-    end 
-    
+    end
+
     def update
       channel = Channel.find_by(uuid: params[:id])
-
       begin
         channel.update_columns({ name: params[:name], category: params[:category], description: params[:description] })
         head :ok
       rescue NoMethodError
-        render json: InvalideUserData.new, status: :unprocessable_entity
+        render json: InvalidChannelData.new, status: :unprocessable_entity
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+        render json: DuplicateChannel.new, status: :unprocessable_entity
       end
-    end 
+    end
 
     def destroy
       begin
         Channel.find_by!(uuid: params[:id]).destroy
         head :ok
       rescue ActiveRecord::RecordNotFound
-        render json: ChannelNotFound.new, status: :not_found #todo
+        render json: ChannelNotFound.new, status: :not_found
       end
     end
 

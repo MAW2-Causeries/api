@@ -11,6 +11,6 @@ class Channel < ApplicationRecord
     self.uuid = SecureRandom.uuid
   end
 
-  validates :name, presence: true, uniqueness: { scope: :guild_id } # add index in db for both columns, non null for name + category
+  validates :name, presence: true, uniqueness: { scope: [ :guild_id, :category ] }
   validates :category, presence: true
 end
