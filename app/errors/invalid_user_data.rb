@@ -1,4 +1,4 @@
-class InvalideUserData < AuthentificationError
+class InvalidUserData < AuthentificationError
   def initialize(msg = "The user data is invalid")
     super(msg)
   end
