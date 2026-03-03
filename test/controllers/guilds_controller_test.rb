@@ -1,25 +1,25 @@
 require "test_helper"
 
-class GuildControllerTest < ActionDispatch::IntegrationTest
+class GuildsControllerTest < ActionDispatch::IntegrationTest
 setup { @guild = Guild.take }
   test "create_success" do
-    post "/api/guilds", params: { guild: { name: "Test Guild", description: "This is a test guild", user_id: "500a75db-1486-4719-bbb8-776e4cbebde1", banner_picture_path: "default_banner.png"} }
+    post "/api/guilds", params: { guild: { name: "Test Guilde", description: "This is a test guild", owner_id: "501a75db-1486-4719-bbb8-776e4cbebde1", creator_id: "501a75db-1486-4719-bbb8-776e4cbebde1", banner_picture_path: "default_banner.png" } }
     assert_response(:ok)
   end
 
   test "create_failure_userNotFound" do
-    post "/api/guilds", params: { guild: { name: "Test Guild", description: "This is a test guild", user_id: "Not gonna be found", banner_picture_path: "default_banner.png"} }
+    post "/api/guilds", params: { guild: { name: "Test Guilding", description: "This is a test guild", banner_picture_path: "default_banner.png" } }
     assert_response(:unprocessable_entity)
     response = JSON.parse(@response.body)
-    assert_equal "The user was not found", response["error"]
+    assert_equal "The user was not found", response
   end
 
   test "create_failure_duplicate" do
-    post "/api/guilds", params: { guild: { name: "Test Guild", description: "This is a test guild", user_id: "500a75db-1486-4719-bbb8-776e4cbebde1", banner_picture_path: "default_banner.png"} }
+    post "/api/guilds", params: { guild: { name: "Test Guild", description: "This is a test guild", owner_id: "501a75db-1486-4719-bbb8-776e4cbebde1", creator_id: "501a75db-1486-4719-bbb8-776e4cbebde1",  banner_picture_path: "default_banner.png" } }
     assert_response(:unprocessable_entity)
     response = JSON.parse(@response.body)
-    assert_equal "The guild name has already be taken", response["error"]
-  end 
+    assert_equal "The guild name has already be taken", response
+  end
 
   test "show_success" do
     get "/api/guilds/600a75db-1486-4719-bbb8-776e4cbebde1"
@@ -32,7 +32,7 @@ setup { @guild = Guild.take }
     get "/api/guilds/050"
     assert_response(:not_found)
     response = JSON.parse(@response.body)
-    assert_equal "The guild was not found", response["error"]
+    assert_equal "The guild was not found", response
   end
 
   test "update_success" do
@@ -44,19 +44,19 @@ setup { @guild = Guild.take }
     response = JSON.parse(@response.body)
     assert_equal "Guild2 updated", response["name"]
   end
-  
+
   test "update_failure_guildNotFound" do
-    patch "/api/guilds/050", params: { name: "Guild2 updated", description: "yup updated", banner_picture_path: "default_banner.png"}
+    patch "/api/guilds/050", params: { name: "Guild2 updated", description: "yup updated", banner_picture_path: "default_banner.png" }
     assert_response(:not_found)
     response = JSON.parse(@response.body)
-    assert_equal "The guild was not found", response["error"]
-  end 
+    assert_equal "The guild was not found", response
+  end
 
   test "update_failure_duplicate" do
-    patch "api/guilds/601a75db-1486-4719-bbb8-776e4cbebde1", params: { name: "Test Guild", description: "yup updated", banner_picture_path: "default_banner.png", owner_id: "500a75db-1486-4719-bbb8-776e4cbebde1" }
+    patch "/api/guilds/601a75db-1486-4719-bbb8-776e4cbebde1", params: { name: "Test Guild", description: "yup updated", banner_picture_path: "default_banner.png", owner_id: "500a75db-1486-4719-bbb8-776e4cbebde1" }
     assert_response(:unprocessable_entity)
     response = JSON.parse(@response.body)
-    assert_equal "The guild name has already be taken", response["error"]
+    assert_equal "The guild name has already be taken", response
   end
 
   test "destroy_success" do
@@ -66,13 +66,13 @@ setup { @guild = Guild.take }
     get "/api/guilds/602a75db-1486-4719-bbb8-776e4cbebde1"
     assert_response(:not_found)
     response = JSON.parse(@response.body)
-    assert_equal "The guild was not found", response["error"]
-  end 
+    assert_equal "The guild was not found", response
+  end
 
   test "destroy_failure_guildNotFound" do
     delete "/api/guilds/050"
     assert_response(:not_found)
     response = JSON.parse(@response.body)
-    assert_equal "The guild was not found", response["error"]
-  end 
+    assert_equal "The guild was not found", response
+  end
 end
