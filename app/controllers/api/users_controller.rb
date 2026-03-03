@@ -36,7 +36,7 @@ module Api
       user.update_columns({ username: params[:username], profile_picture_path: params[:profile_picture_path], password_digest: user.encode_password(params[:password]) })
       head :ok
     rescue NoMethodError
-      render json: InvalideUserData.new, status: :unprocessable_entity
+      render json: InvalidUserData.new, status: :unprocessable_entity
     end
   end
 
