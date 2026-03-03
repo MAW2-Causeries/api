@@ -24,7 +24,7 @@ class ChannelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create_failure_duplicate" do
-    post "/api/channels", params: { channel: { name: "Test text channel2", category: "text", description: "This is a test channel", guild_id: "600a75db-1486-4719-bbb8-776e4cbebde1" } }
+    post "/api/channels", params: { channel: { name: "test-text-channel2", category: "text", description: "This is a test channel", guild_id: "600a75db-1486-4719-bbb8-776e4cbebde1" } }
 
     assert_response(:unprocessable_entity)
     response = JSON.parse(@response.body)
@@ -64,7 +64,7 @@ class ChannelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "update_failure_duplicate" do
-    patch "/api/channels/701a75db-1486-4719-bbb8-776e4cbebde1", params: { name: "Test voice channel", category: "voice", description: "just a test", guild_id: "600a75db-1486-4719-bbb8-776e4cbebde1" }
+    patch "/api/channels/701a75db-1486-4719-bbb8-776e4cbebde1", params: { name: "test-voice-channel", category: "voice", description: "just a test", guild_id: "600a75db-1486-4719-bbb8-776e4cbebde1" }
     assert_response(:unprocessable_entity)
 
     response = JSON.parse(@response.body)
