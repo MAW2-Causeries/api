@@ -14,6 +14,7 @@ module Api
     def create
       attrs = channel_params.to_h
       channel = Channel.new(attrs)
+      channel.name = channel.name.match?(/^([a-z0-9]+-?)*$/) ? channel.name : channel.reformatted_name
       logger.debug "Creating channel with attributes: #{channel.inspect}"
       begin
         channel.save!
