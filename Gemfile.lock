@@ -385,6 +385,7 @@ DEPENDENCIES
   brakeman
   bundler-audit
   capybara
+  date (~> 3.5)
   debug
   dotenv-rails
   fiddle
