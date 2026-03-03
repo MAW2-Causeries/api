@@ -2,7 +2,7 @@ class User < ApplicationRecord
   has_many :guilds, foreign_key: :owner_id, primary_key: :uuid
   has_many :guilds, foreign_key: :creator_id, primary_key: :uuid
   has_secure_password
-  before_save :generate_uuid, unless: :uuid?
+  include HasUuid
 
   def as_json
     super(only: [ :uuid, :email, :profile_picture_path, :username ])
@@ -14,11 +14,6 @@ class User < ApplicationRecord
 
   def encode_password(password)
     BCrypt::Password.create(password)
-  end
-
-  private
-  def generate_uuid
-    self.uuid = SecureRandom.uuid
   end
 
   normalizes :email, with: ->(e) { e.strip.downcase }
