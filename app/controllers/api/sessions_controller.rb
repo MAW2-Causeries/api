@@ -11,7 +11,7 @@ module Api
       begin
         user.load_password_hash(user.password_digest)
       rescue NoMethodError
-        render json: InvalideUserData.new, status: :unauthorized
+        render json: InvalidUserData.new, status: :unauthorized
       else
         if user.load_password_hash(user.password_digest) == password
           @token = helpers.encode_tokenjwt({ user_id: user.uuid })

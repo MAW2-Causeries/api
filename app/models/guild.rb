@@ -1,7 +1,7 @@
 class Guild < ApplicationRecord
   has_many :channels, foreign_key: :guild_id, primary_key: :uuid, dependent: :destroy
-  belongs_to :users, foreign_key: :owner_id, primary_key: :uuid
-  belongs_to :users, foreign_key: :creator_id, primary_key: :uuid
+  belongs_to :user, foreign_key: :owner_id, primary_key: :uuid
+  belongs_to :user, foreign_key: :creator_id, primary_key: :uuid
   before_save :generate_uuid, unless: :uuid?
 
   def as_json
