@@ -1,0 +1,2 @@
+DATABASE_PASSWORD_DEV="dbpassword"
+JWT_SECRET="jwtsecret"
