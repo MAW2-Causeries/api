@@ -3,7 +3,7 @@ class Guild < ApplicationRecord
   belongs_to :user, foreign_key: :owner_id, primary_key: :uuid
   belongs_to :user, foreign_key: :creator_id, primary_key: :uuid
   include HasUuid
-  
+
   def as_json
     super(only: [ :uuid, :name, :owner_id, :description ])
   end

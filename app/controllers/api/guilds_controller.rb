@@ -14,8 +14,8 @@ module Api
       attrs = guild_params.to_h
       guild = Guild.new(attrs)
       unless guild.name.match?(/^[A-Za-z0-9]+$/)
-        render json: InvalidGuildData.new, status: :bad_request #another ways to show error
-      end 
+        render json: InvalidGuildData.new, status: :bad_request # another ways to show error
+      end
       begin
         guild.save!
         head :ok
