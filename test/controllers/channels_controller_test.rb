@@ -18,7 +18,7 @@ class ChannelsControllerTest < ActionDispatch::IntegrationTest
   test "create_failure_guildNotFound" do
     post "/api/channels", params: { channel: { name: "Test text channel3", category: "text", description: "This is a test channel2", guild_id: "Not gonna be found" } }
 
-    assert_response(:unprocessable_entity)
+    assert_response(:not_found)
     response = JSON.parse(@response.body)
     assert_equal "The guild was not found", response
   end

@@ -11,11 +11,11 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "register_failure_duplicate" do
-    post "/api/users", params: { email: "test@test.com", password: "test" }
+    post "/api/users", params: {  user: { email: "test@test.com", password: "test", username: "testoting" } }
 
-    assert_response(:forbidden)
+    assert_response(:unprocessable_entity)
     response = JSON.parse(@response.body)
-    assert_equal "The username and/or email has already be taken", response["error"]
+    assert_equal "The username and/or email has already been taken", response
   end
 
   test "show_success" do
@@ -44,7 +44,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "update_fail" do
     patch "/api/users/050", params: { profile_picture_path: "default_profile_pic.png", username: "fwefwe", password: "test" }
     response = JSON.parse(@response.body)
-    assert_equal "The user data is invalid", response
+    assert_equal "The user was not found", response
   end
 
     test "destroy_success" do

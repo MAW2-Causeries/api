@@ -31,7 +31,7 @@ module Api
 
     def update
       begin
-        set_guild.update!({ name: params[:name], description: params[:description], owner_id: params.fetch(:owner_id, guild.owner_id), banner_picture_path: params[:banner_picture_path] })
+        set_guild.update!({ name: params[:name], description: params[:description], owner_id: params.fetch(:owner_id, set_guild.owner_id), banner_picture_path: params[:banner_picture_path] })
         head :ok
       rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
         render json: DuplicateGuild.new, status: :unprocessable_entity

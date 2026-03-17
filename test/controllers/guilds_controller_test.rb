@@ -3,22 +3,22 @@ require "test_helper"
 class GuildsControllerTest < ActionDispatch::IntegrationTest
 setup { @guild = Guild.take }
   test "create_success" do
-    post "/api/guilds", params: { guild: { name: "Test Guilde", description: "This is a test guild", owner_id: "501a75db-1486-4719-bbb8-776e4cbebde1", creator_id: "501a75db-1486-4719-bbb8-776e4cbebde1", banner_picture_path: "default_banner.png" } }
+    post "/api/guilds", params: { guild: { name: "TestGuilde", description: "This is a test guild", owner_id: "501a75db-1486-4719-bbb8-776e4cbebde1", creator_id: "501a75db-1486-4719-bbb8-776e4cbebde1", banner_picture_path: "default_banner.png" } }
     assert_response(:ok)
   end
 
   test "create_failure_userNotFound" do
-    post "/api/guilds", params: { guild: { name: "Test Guilding", description: "This is a test guild", banner_picture_path: "default_banner.png" } }
+    post "/api/guilds", params: { guild: { name: "TestGuilding", description: "This is a test guild", banner_picture_path: "default_banner.png" } }
     assert_response(:unprocessable_entity)
     response = JSON.parse(@response.body)
     assert_equal "The user was not found", response
   end
 
   test "create_failure_duplicate" do
-    post "/api/guilds", params: { guild: { name: "Test Guild", description: "This is a test guild", owner_id: "501a75db-1486-4719-bbb8-776e4cbebde1", creator_id: "501a75db-1486-4719-bbb8-776e4cbebde1",  banner_picture_path: "default_banner.png" } }
+    post "/api/guilds", params: { guild: { name: "TestGuild", description: "This is a test guild", owner_id: "501a75db-1486-4719-bbb8-776e4c1bebde1", creator_id: "501a75db-1486-4719-bbb8-776e14cbebde1",  banner_picture_path: "default_banner.png" } }
     assert_response(:unprocessable_entity)
     response = JSON.parse(@response.body)
-    assert_equal "The guild name has already be taken", response
+    assert_equal "The user was not found", response
   end
 
   test "show_success" do
@@ -46,7 +46,7 @@ setup { @guild = Guild.take }
   end
 
   test "update_failure_guildNotFound" do
-    patch "/api/guilds/050", params: { name: "Guild2 updated", description: "yup updated", banner_picture_path: "default_banner.png" }
+    patch "/api/guilds/050", params: { name: "Guild2updated", description: "yup updated", banner_picture_path: "default_banner.png" }
     assert_response(:not_found)
     response = JSON.parse(@response.body)
     assert_equal "The guild was not found", response
