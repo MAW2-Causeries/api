@@ -18,10 +18,14 @@ module Api
     if params[:user].present?
         user_params.to_h
     else
-      # permit top-level keys when client sends non-nested JSON
       params.permit(:email, :password, :username, :profile_picture_path).to_h
     end
     user = User.new(attrs)
+    unless user.username.match(/^[A-Za-z0-9]+$/)
+      render json: InvalidUserData.new, status: :bad_request
+      return
+    end 
+    
     if user.save
       head :ok
     else
