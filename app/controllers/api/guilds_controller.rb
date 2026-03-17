@@ -3,7 +3,7 @@ module Api
     protect_from_forgery with: :null_session
 
     rescue_from ActiveRecord::RecordNotFound, with: :guild_not_found
-    rescue_from ActiveRecord::NoMethodError, with: :record_invalid
+    rescue_from NoMethodError, with: :record_invalid
     rescue_from ActiveRecord::InvalidForeignKey, with: :user_not_found
 
     def show
@@ -14,7 +14,8 @@ module Api
       attrs = guild_params.to_h
       guild = Guild.new(attrs)
       unless guild.name.match?(/^[A-Za-z0-9]+$/)
-        render json: InvalidGuildData.new, status: :bad_request # another ways to show error
+        render json: InvalidGuildData.new, status: :bad_request
+        return
       end
       begin
         guild.save!
@@ -46,7 +47,6 @@ module Api
 
     def guild_params
       params.require(:guild).permit(:name, :description, :owner_id, :banner_picture_path, :creator_id)
-      # might be able to refactor/reduce to asked id
     end
 
     def set_guild
