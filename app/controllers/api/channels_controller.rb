@@ -46,10 +46,10 @@ module Api
 
     def record_invalid
       render json: InvalidChannelData.new, status: :unprocessable_entity
-    end 
+    end
 
     def channel_not_found
       render json: ChannelNotFound.new, status: :not_found
-    end 
+    end
   end
 end

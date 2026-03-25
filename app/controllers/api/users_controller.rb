@@ -24,7 +24,7 @@ module Api
     unless user.username.match(/^[A-Za-z0-9]+$/)
       render json: InvalidUserData.new, status: :bad_request
       return
-    end 
+    end
     user.save!
     head :ok
   end
