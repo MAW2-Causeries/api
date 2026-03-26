@@ -1,9 +1,9 @@
 class User < ApplicationRecord
   has_secure_password
-  before_save :generate_uuid, unless: :uuid?
+  before_save :generate_uuid, unless: :id?
 
   def as_json
-    super(only: [ :uuid, :email, :profile_picture_path, :username ])
+    super(only: [ :id, :email, :profile_picture_path, :username ])
   end
 
   def load_password_hash(password)
@@ -16,7 +16,7 @@ class User < ApplicationRecord
 
   private
   def generate_uuid
-    self.uuid = SecureRandom.uuid
+    self.id = SecureRandom.uuid
   end
 
   normalizes :email, with: ->(e) { e.strip.downcase }

@@ -14,7 +14,7 @@ module Api
         render json: InvalideUserData.new, status: :unauthorized
       else
         if user.load_password_hash(user.password_digest) == password
-          @token = helpers.encode_tokenjwt({ user_id: user.uuid })
+          @token = helpers.encode_tokenjwt({ user_id: user.id })
           render json: { user: user.as_json, token: @token }, status: :ok
         else
           render json: { error: "Invalid password or email" }, status: :unauthorized
@@ -25,7 +25,7 @@ module Api
     # return the current logged user
     def index
       begin
-        current_user= User.find_by(uuid: helpers.decode_tokenjwt[0]["user_id"])
+        current_user= User.find_by(id: helpers.decode_tokenjwt[0]["user_id"])
       rescue NoMethodError
         render json: UserNotFound.new("Invalid token"), status: :unauthorized
       else

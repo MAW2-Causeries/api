@@ -5,7 +5,7 @@ module Api
   # get the specific user id and send back datas
   def show
     begin
-      user = User.find_by!(uuid: params[:id])
+      user = User.find_by!(id: params[:id])
       render json: user.as_json, status: :ok
     rescue ActiveRecord::RecordNotFound
       render json: UserNotFound.new, status: :not_found
@@ -30,7 +30,7 @@ module Api
   end
   # update specific user id
   def update
-    user = User.find_by(uuid: params[:id])
+    user = User.find_by(id: params[:id])
 
     begin
       user.update_columns({ username: params[:username], profile_picture_path: params[:profile_picture_path], password_digest: user.encode_password(params[:password]) })
@@ -43,7 +43,7 @@ module Api
   # kill the user
   def destroy
     begin
-      User.find_by!(uuid: params[:id]).destroy
+      User.find_by!(id: params[:id]).destroy
       head :ok
     rescue ActiveRecord::RecordNotFound
       render json: UserNotFound.new, status: :not_found
