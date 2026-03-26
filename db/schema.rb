@@ -20,7 +20,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_135649) do
     t.datetime "updated_at", null: false
     t.index ["guild_id", "name", "category"], name: "channels_unique", unique: true
     t.index ["guild_id"], name: "index_channels_on_guild_id"
-    t.index ["name", "guild_id", "category", "uuid"], name: "index_channels_on_name_and_guild_id_and_category_and_uuid", unique: true
   end
 
   create_table "guilds", primary_key: "uuid", id: { type: :string, limit: 36 }, charset: "utf8mb3", force: :cascade do |t|
@@ -46,7 +45,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_135649) do
     t.string "username", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
-    t.index ["uuid"], name: "index_users_on_uuid", unique: true
   end
 
   add_foreign_key "channels", "guilds", primary_key: "uuid"

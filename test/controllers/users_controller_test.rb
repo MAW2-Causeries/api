@@ -38,7 +38,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
     get "/api/users/503a75db-1486-4719-bbb8-776e4cbebde1"
     response = JSON.parse(@response.body)
-    assert_equal users(:four).username, response["username"]
+    assert_equal "bloblie", response["username"]
   end
 
   test "update_fail" do

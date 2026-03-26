@@ -9,7 +9,7 @@ module Api
   # get the specific user id and send back datas
   def show
     begin
-      user = User.find_by!(uuid: params[:id])
+      user = User.find_by!(id: params[:id])
       render json: user.as_json, status: :ok
     rescue ActiveRecord::RecordNotFound
       render json: UserNotFound.new, status: :not_found

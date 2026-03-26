@@ -10,7 +10,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal users(:one).username, response["user"]["username"]
   end
 
-    test "login_failure_wrong_input" do
+  test "login_failure_wrong_input" do
     post "/api/sessions", params: { email: "teest@test.com", password: "test" }
 
     assert_response(:unauthorized)

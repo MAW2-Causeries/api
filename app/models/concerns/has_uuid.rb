@@ -1,4 +1,3 @@
-# app/models/concerns/has_uuid.rb
 module HasUuid
   extend ActiveSupport::Concern
 
@@ -9,6 +8,6 @@ module HasUuid
   private
 
   def generate_uuid
-    self.uuid ||= SecureRandom.uuid
+    self.id = SecureRandom.uuid
   end
 end

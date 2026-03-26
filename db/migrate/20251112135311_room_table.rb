@@ -1,10 +1,14 @@
 class RoomTable < ActiveRecord::Migration[8.1]
   def change
-      create_table :rooms do |t|
-        t.belongs_to :type, null: false, foreign_key: { to_table: :roomTypes }
-        t.string :description, null: true
-        t.belongs_to :guild, null: false, foreign_key: { to_table: :guilds }
+    create_table :rooms, id: false do |t|
+      t.string :id, primary_key: true
+      t.string :room_type_id, null: false
+      t.string :description, null: true
+      t.string :guild_id, null: false
       t.timestamps
     end
+
+    add_foreign_key :rooms, :guilds, column: :guild_id
+    add_foreign_key :rooms, :roomtypes, column: :room_type_id
   end
 end

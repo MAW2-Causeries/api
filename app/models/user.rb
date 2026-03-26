@@ -3,9 +3,10 @@ class User < ApplicationRecord
   has_many :guilds, foreign_key: :creator_id, primary_key: :uuid
   has_secure_password
   include HasUuid
+  before_save :generate_uuid, unless: :id?
 
   def as_json
-    super(only: [ :uuid, :email, :profile_picture_path, :username ])
+    super(only: [ :id, :email, :profile_picture_path, :username ])
   end
 
   def load_password_hash(password)
