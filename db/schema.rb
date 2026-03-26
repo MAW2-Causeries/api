@@ -10,37 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_15_091820) do
-  create_table "guilds", charset: "utf8mb3", force: :cascade do |t|
+ActiveRecord::Schema[8.1].define(version: 2025_11_17_074008) do
+  create_table "guilds", id: :string, charset: "utf8mb3", force: :cascade do |t|
     t.string "banner_picture_path", null: false
     t.datetime "created_at", null: false
-    t.bigint "creator_id", null: false
+    t.string "creator_id", null: false
     t.string "description"
     t.string "name", null: false
-    t.bigint "owner_id", null: false
+    t.string "owner_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["creator_id"], name: "index_guilds_on_creator_id"
-    t.index ["owner_id"], name: "index_guilds_on_owner_id"
+    t.index ["creator_id"], name: "fk_rails_bf778c79cf"
+    t.index ["owner_id"], name: "fk_rails_e5adc31fa8"
   end
 
-  create_table "rooms", charset: "utf8mb3", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "description"
-    t.bigint "guild_id", null: false
-    t.bigint "type_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["guild_id"], name: "index_rooms_on_guild_id"
-    t.index ["type_id"], name: "index_rooms_on_type_id"
-  end
-
-  create_table "roomtypes", charset: "utf8mb3", force: :cascade do |t|
+  create_table "roomTypes", id: :string, charset: "utf8mb3", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "description"
     t.string "name", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "users", primary_key: "uuid", id: { type: :string, limit: 36, default: "UUID()" }, charset: "utf8mb3", force: :cascade do |t|
+  create_table "rooms", id: :string, charset: "utf8mb3", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.string "guild_id", null: false
+    t.string "room_type_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["guild_id"], name: "fk_rails_028d5e0dc2"
+    t.index ["room_type_id"], name: "fk_rails_f4fff90e9d"
+  end
+
+  create_table "users", id: :string, charset: "utf8mb3", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
     t.string "password_digest", null: false
@@ -52,6 +52,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_15_091820) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "guilds", "users", column: "creator_id"
+  add_foreign_key "guilds", "users", column: "owner_id"
   add_foreign_key "rooms", "guilds"
-  add_foreign_key "rooms", "roomtypes", column: "type_id"
+  add_foreign_key "rooms", "roomTypes", column: "room_type_id"
 end

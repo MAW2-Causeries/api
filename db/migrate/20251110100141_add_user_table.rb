@@ -1,6 +1,7 @@
 class AddUserTable < ActiveRecord::Migration[8.1]
   def change
-    create_table :users do |t|
+    create_table :users, id: false do |t|
+      t.string :id, primary_key: true
       t.string :username, null: false
       t.string :email, null: false
       t.string :phone_number, null: true
