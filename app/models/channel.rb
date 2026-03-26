@@ -1,9 +1,9 @@
 class Channel < ApplicationRecord
-  belongs_to :guilds, foreign_key: :guild_id, primary_key: :uuid, optional: true
+  belongs_to :guilds, foreign_key: :guild_id, primary_key: :id, optional: true
   include HasUuid
 
   def as_json
-    super(only: [ :uuid, :name, :category, :guild_id, :description ])
+    super(only: [ :id, :name, :category, :guild_id, :description ])
   end
 
   def reformatted_name

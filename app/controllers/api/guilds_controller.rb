@@ -21,7 +21,7 @@ module Api
         guild.save!
         head :ok
       rescue ActiveRecord::RecordInvalid
-        if User.find_by(uuid: guild.owner_id).nil? || User.find_by(uuid: guild.creator_id).nil?
+        if User.find_by(id: guild.owner_id).nil? || User.find_by(id: guild.creator_id).nil?
           render json: UserNotFound.new, status: :unprocessable_entity
         else
           render json: DuplicateGuild.new, status: :unprocessable_entity
@@ -40,7 +40,7 @@ module Api
 
     def destroy
       begin
-        Guild.find_by!(uuid: params[:id]).destroy
+        Guild.find_by!(id: params[:id]).destroy
         head :ok
       end
     end
@@ -50,7 +50,7 @@ module Api
     end
 
     def set_guild
-      Guild.find_by!(uuid: params[:id])
+      Guild.find_by!(id: params[:id])
     end
 
     def guild_not_found

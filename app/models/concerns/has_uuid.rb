@@ -2,12 +2,12 @@ module HasUuid
   extend ActiveSupport::Concern
 
   included do
-    before_create :generate_uuid
+    before_create :generate_id
   end
 
   private
 
-  def generate_uuid
-    self.id = SecureRandom.uuid
+  def generate_id
+    self.id = SecureRandom.id
   end
 end

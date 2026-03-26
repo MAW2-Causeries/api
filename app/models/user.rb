@@ -1,9 +1,9 @@
 class User < ApplicationRecord
-  has_many :guilds, foreign_key: :owner_id, primary_key: :uuid
-  has_many :guilds, foreign_key: :creator_id, primary_key: :uuid
+  has_many :guilds, foreign_key: :owner_id, primary_key: :id
+  has_many :guilds, foreign_key: :creator_id, primary_key: :id
   has_secure_password
   include HasUuid
-  before_save :generate_uuid, unless: :id?
+  before_save :generate_id, unless: :id?
 
   def as_json
     super(only: [ :id, :email, :profile_picture_path, :username ])

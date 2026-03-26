@@ -8,7 +8,7 @@ module Api
     rescue_from NoMethodError, with: :record_invalid
 
     def show
-        channel = Channel.find_by!(uuid: params[:id])
+        channel = Channel.find_by!(id: params[:id])
         render json: channel.as_json, status: :ok
     end
 
@@ -22,13 +22,13 @@ module Api
     end
 
     def update
-      channel = Channel.find_by(uuid: params[:id])
+      channel = Channel.find_by(id: params[:id])
       channel.update_columns({ name: params[:name], category: params[:category], description: params[:description] })
       head :ok
     end
 
     def destroy
-        Channel.find_by!(uuid: params[:id]).destroy
+        Channel.find_by!(id: params[:id]).destroy
         head :ok
     end
 

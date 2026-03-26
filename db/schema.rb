@@ -10,8 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_17_135649) do
-  create_table "channels", primary_key: "uuid", id: { type: :string, limit: 36 }, charset: "utf8mb3", force: :cascade do |t|
+ActiveRecord::Schema[8.1].define(version: 2026_03_26_180200) do
+  create_table "channels", primary_key: "id", id: { type: :string, limit: 36 }, force: :cascade do |t|
     t.string "category", null: false
     t.datetime "created_at", null: false
     t.string "description"
@@ -22,7 +22,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_135649) do
     t.index ["guild_id"], name: "index_channels_on_guild_id"
   end
 
-  create_table "guilds", primary_key: "uuid", id: { type: :string, limit: 36 }, charset: "utf8mb3", force: :cascade do |t|
+  create_table "guilds", primary_key: "id", id: { type: :string, limit: 36 }, force: :cascade do |t|
     t.string "banner_picture_path", null: false
     t.datetime "created_at", null: false
     t.string "creator_id", limit: 36, null: false
@@ -35,7 +35,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_135649) do
     t.index ["owner_id"], name: "index_guilds_on_owner_id"
   end
 
-  create_table "users", primary_key: "uuid", id: { type: :string, limit: 36 }, charset: "utf8mb3", force: :cascade do |t|
+  create_table "users", primary_key: "id", id: { type: :string, limit: 36 }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
     t.string "password_digest", null: false
@@ -47,7 +47,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_135649) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
-  add_foreign_key "channels", "guilds", primary_key: "uuid"
-  add_foreign_key "guilds", "users", column: "creator_id", primary_key: "uuid"
-  add_foreign_key "guilds", "users", column: "owner_id", primary_key: "uuid"
+  add_foreign_key "channels", "guilds", primary_key: "id"
+  add_foreign_key "guilds", "users", column: "creator_id", primary_key: "id"
+  add_foreign_key "guilds", "users", column: "owner_id", primary_key: "id"
 end

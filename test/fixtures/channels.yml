@@ -4,7 +4,7 @@ one:
   guild_id: null
   category: text
   name: test-text-channel
-  uuid: 700a75db-1486-4719-bbb8-776e4cbebde1
+  id: 700a75db-1486-4719-bbb8-776e4cbebde1
   description: This is a test channel
 
 two:
@@ -13,7 +13,7 @@ two:
   guild_id: 600a75db-1486-4719-bbb8-776e4cbebde1
   category: text
   name: test-text-channel2
-  uuid: 701a75db-1486-4719-bbb8-776e4cbebde1
+  id: 701a75db-1486-4719-bbb8-776e4cbebde1
   description: This is a test channel2
 
 three:
@@ -22,5 +22,5 @@ three:
   guild_id: 600a75db-1486-4719-bbb8-776e4cbebde1
   category: voice
   name: test-voice-channel
-  uuid: 702a75db-1486-4719-bbb8-776e4cbebde1
+  id: 702a75db-1486-4719-bbb8-776e4cbebde1
   description: This is a test channel but voiced

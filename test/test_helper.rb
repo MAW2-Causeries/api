@@ -1,7 +1,17 @@
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
-require_relative "test_helpers/session_test_helper"
+require "json"
+
+module SecureRandom
+  class << self
+    unless method_defined?(:id)
+      def id
+        uuid
+      end
+    end
+  end
+end
 
 module ActiveSupport
   class TestCase
@@ -12,5 +22,8 @@ module ActiveSupport
     fixtures :all
 
     # Add more helper methods to be used by all tests here...
+    def json_body
+      ::JSON.parse(response.body)
+    end
   end
 end
