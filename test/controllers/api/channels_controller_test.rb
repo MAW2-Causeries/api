@@ -6,24 +6,55 @@ class Api::ChannelsControllerTest < ActionController::TestCase
   setup do
     @request.env["devise.mapping"] = Devise.mappings[:user]
     sign_in users(:one)
+    @accessible_dm_channel = DMChannel.create!(
+      name: "private-chat",
+      type: "DMChannel",
+      users: [ users(:one), users(:two) ]
+    )
   end
 
   test "show renders the serialized channel" do
-    get :show, params: { id: channels(:one).id }, as: :json
+    get :show, params: { id: @accessible_dm_channel.id }, as: :json
 
     assert_response :ok
-    assert_equal channels(:one).name, json_body["name"]
+    assert_equal @accessible_dm_channel.name, json_body["name"]
   end
 
-  test "create returns validation errors for missing type" do
+  test "create returns invalid channel type for missing type" do
     post :create, params: {
       name: "new-channel",
       description: "Test",
       guild_id: channels(:two).guild_id
     }, as: :json
 
-    assert_response :unprocessable_entity
-    assert_json_error(code: "record_invalid", message: "Type can't be blank")
+    assert_response :bad_request
+    assert_json_error(code: "invalid_channel_type", message: "Invalid channel type: ")
+  end
+
+  test "create builds a text channel in a guild" do
+    post :create, params: {
+      name: "General Chat!!",
+      description: "Guild room",
+      guild_id: guilds(:one).id,
+      type: "text"
+    }, as: :json
+
+    assert_response :created
+    assert_equal "generalchat", json_body["name"]
+    assert_equal "TextChannel", json_body["type"]
+    assert_nil json_body["guild_id"]
+  end
+
+  test "create requires a target user for dm channels" do
+    post :create, params: {
+      name: "direct-message",
+      description: "Private room",
+      guild_id: guilds(:one).id,
+      type: "dm"
+    }, as: :json
+
+    assert_response :not_found
+    assert_json_error(code: "record_not_found", message: "Couldn't find User with [WHERE \"users\".\"id\" IS NULL]")
   end
 
   test "update returns not found when the channel does not exist" do

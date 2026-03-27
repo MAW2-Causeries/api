@@ -5,6 +5,10 @@ class User < ApplicationRecord
 
   has_many :owned_guilds, class_name: "Guild", foreign_key: :owner_id, primary_key: :id, inverse_of: :owner
   has_many :created_guilds, class_name: "Guild", foreign_key: :creator_id, primary_key: :id, inverse_of: :creator
+  has_and_belongs_to_many :channels,
+    join_table: :channels_users,
+    foreign_key: :user_id,
+    association_foreign_key: :channel_id
   devise :database_authenticatable, :jwt_authenticatable, jwt_revocation_strategy: self
   include HasUuid
   before_save :generate_id, unless: :id?

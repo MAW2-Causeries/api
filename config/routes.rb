@@ -9,7 +9,9 @@ Rails.application.routes.draw do
 
     resources :users, only: %i[show update create destroy]
     resources :guilds, only: %i[show create update destroy]
-    resources :channels, only: %i[show create update destroy]
+    resources :channels, only: %i[show create update destroy index]
+
+    match "*path", to: "base#route_not_found", via: :all
   end
   get "up" => "rails/health#show", as: :rails_health_check
 end

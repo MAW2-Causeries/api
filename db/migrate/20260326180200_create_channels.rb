@@ -11,5 +11,12 @@ class CreateChannels < ActiveRecord::Migration[8.1]
     add_index :channels, :guild_id
 
     add_foreign_key :channels, :guilds, column: :guild_id, primary_key: :id
+
+    create_join_table :channels, :users, column_options: { type: :string, limit: 36 } do |t|
+      t.index :channel_id
+      t.index :user_id
+      t.foreign_key :channels, column: :channel_id, primary_key: :id
+      t.foreign_key :users, column: :user_id, primary_key: :id
+    end
   end
 end

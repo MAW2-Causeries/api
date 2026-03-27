@@ -8,8 +8,8 @@ module Api
     end
 
     def create
-      user = User.create!(create_user_params)
-      render json: user.as_json, status: :created
+      User.create!(create_user_params)
+      head :ok
     end
 
     def update
@@ -26,6 +26,9 @@ module Api
 
     def set_user
       @user = User.find_by!(id: params[:id])
+      if @user != current_user
+        head :forbidden
+      end
     end
 
     def create_user_params

@@ -21,6 +21,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_26_180200) do
     t.index ["guild_id"], name: "index_channels_on_guild_id"
   end
 
+  create_table "channels_users", id: false, force: :cascade do |t|
+    t.string "channel_id", limit: 36, null: false
+    t.string "user_id", limit: 36, null: false
+    t.index ["channel_id"], name: "index_channels_users_on_channel_id"
+    t.index ["user_id"], name: "index_channels_users_on_user_id"
+  end
+
   create_table "guilds", id: { type: :string, limit: 36 }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "creator_id", limit: 36, null: false
@@ -47,6 +54,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_26_180200) do
   end
 
   add_foreign_key "channels", "guilds"
+  add_foreign_key "channels_users", "channels"
+  add_foreign_key "channels_users", "users"
   add_foreign_key "guilds", "users", column: "creator_id"
   add_foreign_key "guilds", "users", column: "owner_id"
 end

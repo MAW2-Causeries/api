@@ -1,8 +1,8 @@
 one:
   created_at: <%= Time.now %>
   updated_at: <%= Time.now %>
-  guild_id: null
-  type: text
+  guild_id: 600a75db-1486-4719-bbb8-776e4cbebde1
+  type: TextChannel
   name: test-text-channel
   id: 700a75db-1486-4719-bbb8-776e4cbebde1
   description: This is a test channel
@@ -10,9 +10,9 @@ one:
 two:
   created_at: <%= Time.now %>
   updated_at: <%= Time.now %>
-  guild_id: 600a75db-1486-4719-bbb8-776e4cbebde1
-  type: text
-  name: test-text-channel2
+  guild_id: null
+  type: DMChannel
+  name: test-dm-channel
   id: 701a75db-1486-4719-bbb8-776e4cbebde1
   description: This is a test channel2
 
@@ -20,7 +20,7 @@ three:
   created_at: <%= Time.now %>
   updated_at: <%= Time.now %>
   guild_id: 600a75db-1486-4719-bbb8-776e4cbebde1
-  type: voice
-  name: test-voice-channel
+  type: TextChannel
+  name: test-text-channel-2
   id: 702a75db-1486-4719-bbb8-776e4cbebde1
   description: This is a voiced test channel

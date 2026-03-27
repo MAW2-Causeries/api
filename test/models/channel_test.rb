@@ -14,7 +14,7 @@ class ChannelTest < ActiveSupport::TestCase
   end
 
   test "reformats names into channel slugs" do
-    channel = Channel.new(name: "General Chat!!", type: "text")
+    channel = TextChannel.new(name: "General Chat!!", type: "TextChannel", guild: guilds(:one))
 
     assert_equal "generalchat", channel.reformatted_name
   end
@@ -29,16 +29,40 @@ class ChannelTest < ActiveSupport::TestCase
   test "serializes the public fields only" do
     payload = channels(:two).as_json
 
-    assert_equal %w[description guild_id id name], payload.keys.sort
-    assert_equal channels(:two).guild_id, payload["guild_id"]
+    assert_equal %w[description id name type], payload.keys.sort
+    assert_equal "DMChannel", payload["type"]
+  end
+
+  test "text channels require a guild" do
+    channel = TextChannel.new(name: "general", type: "TextChannel")
+
+    assert_not channel.valid?
+    assert_includes channel.errors[:guild_id], "can't be blank"
+  end
+
+  test "private channels cannot belong to a guild" do
+    channel = DMChannel.new(name: "private", type: "DMChannel", guild: guilds(:one))
+
+    assert_not channel.valid?
+    assert_includes channel.errors[:guild_id], "must be blank"
+  end
+
+  test "dm channels accept exactly two users" do
+    channel = DMChannel.new(
+      name: "private",
+      type: "DMChannel",
+      users: [ users(:one), users(:two) ]
+    )
+
+    assert channel.valid?
   end
 
   private
 
   def build_channel(overrides = {})
-    Channel.new({
+    TextChannel.new({
       name: "channel-#{SecureRandom.hex(4)}",
-      type: "text",
+      type: "TextChannel",
       description: "Test channel",
       guild_id: guilds(:one).id
     }.merge(overrides))

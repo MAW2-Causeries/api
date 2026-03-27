@@ -10,6 +10,10 @@ module Api
     rescue_from ActiveRecord::RecordNotUnique, with: :render_record_not_unique
     rescue_from ActiveRecord::InvalidForeignKey, with: :render_invalid_foreign_key
 
+    def route_not_found
+      render_error("Route not found", status: :not_found, code: "route_not_found")
+    end
+
     private
 
     def authenticate_api_user!
