@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_26_180200) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_27_110000) do
   create_table "channels", id: { type: :string, limit: 36 }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "description"
@@ -26,6 +26,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_26_180200) do
     t.string "user_id", limit: 36, null: false
     t.index ["channel_id"], name: "index_channels_users_on_channel_id"
     t.index ["user_id"], name: "index_channels_users_on_user_id"
+  end
+
+  create_table "guild_invites", id: { type: :string, limit: 36 }, force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "creator_id", limit: 36, null: false
+    t.string "guild_id", limit: 36, null: false
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_guild_invites_on_creator_id"
+    t.index ["guild_id"], name: "index_guild_invites_on_guild_id"
+    t.index ["token"], name: "index_guild_invites_on_token", unique: true
   end
 
   create_table "guilds", id: { type: :string, limit: 36 }, force: :cascade do |t|
@@ -63,6 +75,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_26_180200) do
   add_foreign_key "channels", "guilds"
   add_foreign_key "channels_users", "channels"
   add_foreign_key "channels_users", "users"
+  add_foreign_key "guild_invites", "guilds"
+  add_foreign_key "guild_invites", "users", column: "creator_id"
   add_foreign_key "guilds", "users", column: "creator_id"
   add_foreign_key "guilds", "users", column: "owner_id"
 end

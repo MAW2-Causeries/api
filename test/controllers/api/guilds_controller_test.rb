@@ -79,6 +79,29 @@ class Api::V1::GuildsControllerTest < ActionController::TestCase
     assert_json_error(code: "forbidden", message: "You don't have access to this guild")
   end
 
+  test "invite creates a reusable invite link for the guild owner" do
+    assert_difference("GuildInvite.count", 1) do
+      post :invite, params: { id: guilds(:one).id }, as: :json
+    end
+
+    assert_response :created
+    assert_equal guilds(:one).id, json_body["guild_id"]
+    assert_equal users(:one).id, json_body["creator_id"]
+    assert json_body["token"].present?
+    assert_equal "/api/v1/guild_invites/#{json_body["token"]}/join", json_body["invite_url"]
+  end
+
+  test "invite returns forbidden for non owners" do
+    guilds(:one).members << users(:two)
+    sign_out :user
+    sign_in users(:two)
+
+    post :invite, params: { id: guilds(:one).id }, as: :json
+
+    assert_response :forbidden
+    assert_json_error(code: "forbidden", message: "Only the owner of the guild can perform this action")
+  end
+
   test "show returns unauthorized when the user is not logged in" do
     sign_out :user
 

@@ -55,6 +55,14 @@ module Api
         render json: @guild.members.as_json, status: :ok
       end
 
+      def invite
+        set_guild
+        return unless only_guild_owner
+
+        invite = @guild.invites.create!(creator: current_api_user)
+        render json: invite.as_json, status: :created
+      end
+
       private
 
       def only_guild_owner

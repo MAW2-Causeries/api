@@ -45,6 +45,28 @@ class GuildTest < ActiveSupport::TestCase
     assert_equal users(:one), guild.creator
   end
 
+  test "invite_member! adds the user once" do
+    guild = guilds(:one)
+    user = users(:two)
+
+    assert_difference("guild.members.count", 1) do
+      guild.invite_member!(user)
+    end
+
+    assert_no_difference("guild.members.count") do
+      guild.invite_member!(user)
+    end
+  end
+
+  test "destroys invites when the guild is deleted" do
+    guild = guilds(:one)
+    GuildInvite.create!(guild: guild, creator: users(:one))
+
+    assert_difference("GuildInvite.count", -1) do
+      guild.destroy
+    end
+  end
+
   private
 
   def build_guild(overrides = {})
