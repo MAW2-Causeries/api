@@ -21,6 +21,12 @@ class User < ApplicationRecord
     super(only: [ :id, :email, :username ])
   end
 
+  def true_all_channels
+    Channel.where(id: channels.select(:id))
+      .or(Channel.where(guild_id: guilds.select(:id)))
+      .distinct
+  end
+
   normalizes :email, with: ->(e) { e.strip.downcase }
   validates :username, presence: true, uniqueness: true
   validates :username, format: { with: USERNAME_FORMAT, message: "must contain only letters and numbers" }

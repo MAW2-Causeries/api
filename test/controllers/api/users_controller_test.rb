@@ -47,6 +47,24 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
     assert_equal "renameduser", users(:one).reload.username
   end
 
+  test "update forbids changing another user" do
+    patch :update, params: {
+      id: users(:two).id,
+      username: "renameduser"
+    }, as: :json
+
+    assert_response :forbidden
+    assert_equal users(:two).username, users(:two).reload.username
+  end
+
+  test "channels returns the user's dm and guild channels" do
+    get :channels, params: { id: users(:one).id }, as: :json
+
+    assert_response :ok
+    assert_equal [ channels(:one).id, channels(:two).id, channels(:three).id ].sort,
+      json_body.map { |channel| channel["id"] }.sort
+  end
+
   test "destroy returns not found when the user does not exist" do
     delete :destroy, params: { id: "missing" }, as: :json
 

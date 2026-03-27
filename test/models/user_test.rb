@@ -39,6 +39,11 @@ class UserTest < ActiveSupport::TestCase
     assert_equal users(:one).username, payload["username"]
   end
 
+  test "true_all_channels returns dm and guild channels" do
+    assert_equal [ channels(:one), channels(:two), channels(:three) ].map(&:id).sort,
+      users(:one).true_all_channels.pluck(:id).sort
+  end
+
   test "authenticates passwords through devise" do
     user = build_user
     user.save!

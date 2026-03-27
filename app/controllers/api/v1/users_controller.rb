@@ -30,7 +30,9 @@ module Api
       end
 
       def channels
-        render json: @user.channels.as_json, status: :ok
+        channels = @user.true_all_channels
+
+        render json: channels.as_json, status: :ok
       end
 
       private
@@ -40,7 +42,7 @@ module Api
       end
 
       def only_current_user!
-        head :forbidden unless @user == current_user
+        head :forbidden unless @user == current_api_user
       end
 
       def create_user_params
