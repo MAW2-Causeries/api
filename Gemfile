@@ -68,7 +68,8 @@ end
 
 gem "dotenv-rails"
 gem "fiddle"
-gem "jwt", "~> 3.1"
+gem "devise"
+gem "devise-jwt"
 gem "rack-cors"
 gem "active_model_serializers", "~> 0.10.15"
 

@@ -9,13 +9,12 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "test@example.com", user.email
   end
 
-  test "requires username email and profile picture path" do
+  test "requires username and email" do
     user = User.new
 
     assert_not user.valid?
     assert_includes user.errors[:username], "can't be blank"
     assert_includes user.errors[:email], "can't be blank"
-    assert_equal "default_profile_pic.png", user.profile_picture_path
   end
 
   test "enforces unique username and email" do
@@ -26,29 +25,35 @@ class UserTest < ActiveSupport::TestCase
     assert_includes duplicate.errors[:email], "has already been taken"
   end
 
+  test "restricts username to alphanumeric characters" do
+    user = build_user(username: "bad name!")
+
+    assert_not user.valid?
+    assert_includes user.errors[:username], "must contain only letters and numbers"
+  end
+
   test "serializes the public fields only" do
     payload = users(:one).as_json
 
-    assert_equal %w[email id profile_picture_path username], payload.keys.sort
+    assert_equal %w[email id username], payload.keys.sort
     assert_equal users(:one).username, payload["username"]
   end
 
-  test "encodes and loads password hashes" do
+  test "authenticates passwords through devise" do
     user = build_user
-    digest = user.encode_password("secret")
-    password = user.load_password_hash(digest)
+    user.save!
 
-    assert password == "secret"
+    assert user.valid_password?("secret")
+    assert_not user.valid_password?("wrong-password")
   end
 
   private
 
   def build_user(overrides = {})
     User.new({
-      username: "user_#{SecureRandom.hex(4)}",
-      email: "user_#{SecureRandom.hex(4)}@example.com",
-      password: "secret",
-      profile_picture_path: "default_profile_pic.png"
+      username: "user#{SecureRandom.hex(4)}",
+      email: "user#{SecureRandom.hex(4)}@example.com",
+      password: "secret"
     }.merge(overrides))
   end
 end

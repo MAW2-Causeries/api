@@ -3,11 +3,15 @@ require "test_helper"
 class Api::SessionsControllerTest < ActionController::TestCase
   tests Api::SessionsController
 
+  setup do
+    @request.env["devise.mapping"] = Devise.mappings[:user]
+  end
+
   test "create returns unauthorized when the user is missing" do
     post :create, params: { email: "missing@example.com", password: "secret" }, as: :json
 
     assert_response :unauthorized
-    assert_equal "The user data is invalid", json_body
+    assert_json_error(code: "authentication_error", message: "Invalid password or email")
   end
 
   test "create returns the serialized user and token on success" do
@@ -21,13 +25,18 @@ class Api::SessionsControllerTest < ActionController::TestCase
   end
 
   test "index returns unauthorized for an invalid token" do
-    get :index, params: { Authorization: "bad-token" }, as: :json
+    @request.headers["Authorization"] = "Bearer bad-token"
+    get :index, as: :json
 
     assert_response :unauthorized
-    assert_equal "Invalid token", json_body
+    assert_json_error(code: "authentication_error", message: "Invalid token")
   end
 
-  test "destroy returns ok" do
+  test "destroy returns ok with a valid token" do
+    user = users(:one)
+    post :create, params: { email: user.email, password: "test" }, as: :json
+
+    @request.headers["Authorization"] = "Bearer #{json_body["token"]}"
     delete :destroy, as: :json
 
     assert_response :ok

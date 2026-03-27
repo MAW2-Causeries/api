@@ -1,55 +1,43 @@
 module Api
-  class ChannelsController < ApplicationController
-    protect_from_forgery with: :null_session
-
-    rescue_from ActiveRecord::RecordNotFound, with: :channel_not_found
-    rescue_from ActiveRecord::InvalidForeignKey, with: :guild_not_found
-    rescue_from ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique, with: :duplicate_record
-    rescue_from NoMethodError, with: :record_invalid
-
+  class ChannelsController < BaseController
     def show
-        channel = Channel.find_by!(id: params[:id])
-        render json: channel.as_json, status: :ok
+      set_channel
+      render json: @channel.as_json, status: :ok
     end
 
     def create
       attrs = channel_params.to_h
       channel = Channel.new(attrs)
-      channel.name = channel.name.match?(/^([a-z0-9]+-?)*$/) ? channel.name : channel.reformatted_name
-      logger.debug "Creating channel with attributes: #{channel.inspect}"
+
       channel.save!
-      head :ok
+      render json: channel.as_json, status: :ok
     end
 
     def update
-      channel = Channel.find_by(id: params[:id])
-      channel.update_columns({ name: params[:name], category: params[:category], description: params[:description] })
-      head :ok
+      set_channel
+
+      @channel.update!(update_channel_params)
+      render json: @channel.as_json, status: :ok
     end
 
     def destroy
-        Channel.find_by!(id: params[:id]).destroy
-        head :ok
+      Channel.find_by!(id: params[:id]).destroy
+
+      head :no_content
+    end
+
+    private
+
+    def update_channel_params
+      params.permit(:name, :description).to_h.compact
     end
 
     def channel_params
-      params.require(:channel).permit(:name, :category, :description, :guild_id)
+      params.permit(:name, :description)
     end
 
-    def duplicate_record
-      render json: DuplicateChannel.new, status: :unprocessable_entity
-    end
-
-    def guild_not_found
-      render json: GuildNotFound.new, status: :not_found
-    end
-
-    def record_invalid
-      render json: InvalidChannelData.new, status: :unprocessable_entity
-    end
-
-    def channel_not_found
-      render json: ChannelNotFound.new, status: :not_found
+    def set_channel
+      @channel = Channel.find_by!(id: params[:id])
     end
   end
 end

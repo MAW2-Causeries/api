@@ -3,6 +3,11 @@ require "test_helper"
 class Api::UsersControllerTest < ActionController::TestCase
   tests Api::UsersController
 
+  setup do
+    @request.env["devise.mapping"] = Devise.mappings[:user]
+    sign_in users(:one)
+  end
+
   test "show renders the serialized user" do
     get :show, params: { id: users(:one).id }, as: :json
 
@@ -10,38 +15,52 @@ class Api::UsersControllerTest < ActionController::TestCase
     assert_equal users(:one).username, json_body["username"]
   end
 
-  test "create rejects usernames with non alphanumeric characters" do
+  test "create returns validation errors for invalid usernames" do
     post :create, params: {
-      user: {
-        email: "new@example.com",
-        password: "secret",
-        username: "bad name!",
-        profile_picture_path: "default_profile_pic.png"
-      }
-    }, as: :json
-
-    assert_response :bad_request
-    assert_equal "The user data is invalid", json_body
-  end
-
-  test "create maps persistence conflicts to duplicate user responses" do
-    post :create, params: {
-      user: {
-        email: users(:one).email,
-        password: "secret",
-        username: "anothername",
-        profile_picture_path: "default_profile_pic.png"
-      }
+      email: "new@example.com",
+      password: "secret",
+      username: "bad name!"
     }, as: :json
 
     assert_response :unprocessable_entity
-    assert_equal "The username and/or email has already been taken", json_body
+    assert_json_error(code: "record_invalid", message: "Username must contain only letters and numbers")
+  end
+
+  test "create returns uniqueness errors for duplicate users" do
+    post :create, params: {
+      email: users(:one).email,
+      password: "secret",
+      username: "anothername"
+    }, as: :json
+
+    assert_response :unprocessable_entity
+    assert_json_error(code: "record_invalid", message: "Email has already been taken")
+  end
+
+  test "update accepts top-level user attributes" do
+    patch :update, params: {
+      id: users(:one).id,
+      username: "renameduser"
+    }, as: :json
+
+    assert_response :ok
+    assert_equal "renameduser", users(:one).reload.username
   end
 
   test "destroy returns not found when the user does not exist" do
     delete :destroy, params: { id: "missing" }, as: :json
 
     assert_response :not_found
-    assert_equal "The user was not found", json_body
+    assert_equal "record_not_found", json_body.dig("error", "code")
+    assert_match(/Couldn't find User/, json_body.dig("error", "message"))
+  end
+
+  test "show returns unauthorized when the user is not logged in" do
+    sign_out :user
+
+    get :show, params: { id: users(:one).id }, as: :json
+
+    assert_response :unauthorized
+    assert_json_error(code: "authentication_error", message: "You need to sign in or sign up before continuing.")
   end
 end

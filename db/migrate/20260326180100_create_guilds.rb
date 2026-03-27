@@ -5,7 +5,6 @@ class CreateGuilds < ActiveRecord::Migration[8.1]
       t.string :description
       t.string :owner_id, null: false, limit: 36
       t.string :creator_id, null: false, limit: 36
-      t.string :banner_picture_path, null: false
       t.timestamps
     end
 

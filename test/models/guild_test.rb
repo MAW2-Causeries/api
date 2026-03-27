@@ -10,7 +10,6 @@ class GuildTest < ActiveSupport::TestCase
 
     assert_not guild.valid?
     assert_includes guild.errors[:name], "can't be blank"
-    assert_includes guild.errors[:banner_picture_path], "can't be blank"
     assert_includes guild.errors[:creator_id], "can't be blank"
     assert_includes guild.errors[:owner_id], "can't be blank"
   end
@@ -37,6 +36,13 @@ class GuildTest < ActiveSupport::TestCase
     end
   end
 
+  test "exposes owner and creator associations" do
+    guild = guilds(:one)
+
+    assert_equal users(:one), guild.owner
+    assert_equal users(:one), guild.creator
+  end
+
   private
 
   def build_guild(overrides = {})
@@ -46,8 +52,7 @@ class GuildTest < ActiveSupport::TestCase
       name: "Guild#{SecureRandom.hex(4)}",
       description: "Test guild",
       owner_id: user.id,
-      creator_id: user.id,
-      banner_picture_path: "default_banner.png"
+      creator_id: user.id
     }.merge(overrides))
   end
 end

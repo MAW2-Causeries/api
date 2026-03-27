@@ -8,6 +8,6 @@ module HasUuid
   private
 
   def generate_id
-    self.id = SecureRandom.id
+    self.id = SecureRandom.uuid
   end
 end

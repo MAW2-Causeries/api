@@ -1,45 +1,40 @@
 module Api
-  class SessionsController < ApplicationController
-    protect_from_forgery with: :null_session
+  class SessionsController < Devise::SessionsController
+    respond_to :json
+    skip_before_action :authenticate_api_user!
 
-    # login
     def create
-      email = params[:email]
-      password = params[:password]
-      user = User.find_by(email: email)
+      user = User.find_for_database_authentication(email: params[:email])
+      return render_authentication_error("Invalid password or email") unless user&.valid_password?(params[:password])
 
-      begin
-        user.load_password_hash(user.password_digest)
-      rescue NoMethodError
-        render json: InvalidUserData.new, status: :unauthorized
-      else
-        if user.load_password_hash(user.password_digest) == password
-          @token = helpers.encode_tokenjwt({ user_id: user.id })
-          render json: { user: user.as_json, token: @token }, status: :ok
-        else
-          render json: { error: "Invalid password or email" }, status: :unauthorized
-        end
-      end
+      sign_in(resource_name, user, store: false)
+      token = request.env["warden-jwt_auth.token"]
+      render json: { user: user.as_json, token: token }, status: :ok
     end
 
-    # return the current logged user
     def index
-      begin
-        current_user= User.find_by(id: helpers.decode_tokenjwt[0]["user_id"])
-      rescue NoMethodError
-        render json: UserNotFound.new("Invalid token"), status: :unauthorized
-      else
-        render json: current_user.as_json, status: :ok
-      end
+      user = authenticated_user_from_token
+      return render_authentication_error("Invalid token") unless user
+
+      render json: user.as_json, status: :ok
     end
 
-    # logout
     def destroy
+      user = authenticated_user_from_token
+      return render_authentication_error("Invalid token") unless user
+
+      sign_out(resource_name)
       render body: nil, status: :ok
     end
 
-    def user_params
-      params.require(:user).permit(:email, :password, :username, :profile_picture_path)
+    private
+
+    def authenticated_user_from_token
+      warden.authenticate(scope: resource_name)
+    end
+
+    def render_authentication_error(message)
+      render_error(message, status: :unauthorized, code: "authentication_error")
     end
   end
 end

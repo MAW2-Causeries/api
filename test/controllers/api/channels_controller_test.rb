@@ -3,6 +3,11 @@ require "test_helper"
 class Api::ChannelsControllerTest < ActionController::TestCase
   tests Api::ChannelsController
 
+  setup do
+    @request.env["devise.mapping"] = Devise.mappings[:user]
+    sign_in users(:one)
+  end
+
   test "show renders the serialized channel" do
     get :show, params: { id: channels(:one).id }, as: :json
 
@@ -10,37 +15,31 @@ class Api::ChannelsControllerTest < ActionController::TestCase
     assert_equal channels(:one).name, json_body["name"]
   end
 
-  test "create reformats names before saving when needed" do
+  test "create returns validation errors for missing type" do
     post :create, params: {
-      channel: {
-        name: "General Chat!!",
-        category: "text",
-        description: "Test"
-      }
-    }, as: :json
-
-    assert_response :ok
-    assert_equal "generalchat", Channel.order(:created_at).last.name
-  end
-
-  test "create maps record conflicts to duplicate channel responses" do
-    post :create, params: {
-      channel: {
-        name: channels(:two).name,
-        category: channels(:two).category,
-        description: "Test",
-        guild_id: channels(:two).guild_id
-      }
+      name: "new-channel",
+      description: "Test",
+      guild_id: channels(:two).guild_id
     }, as: :json
 
     assert_response :unprocessable_entity
-    assert_equal "The channel name has already be taken in this place", json_body
+    assert_json_error(code: "record_invalid", message: "Type can't be blank")
   end
 
-  test "update returns invalid channel data when the record cannot be found" do
-    patch :update, params: { id: "missing", name: "general", category: "text", description: "Test" }, as: :json
+  test "update returns not found when the channel does not exist" do
+    patch :update, params: { id: "missing", name: "general", description: "Test" }, as: :json
 
-    assert_response :unprocessable_entity
-    assert_equal "The channel data is invalid", json_body
+    assert_response :not_found
+    assert_equal "record_not_found", json_body.dig("error", "code")
+    assert_match(/Couldn't find Channel/, json_body.dig("error", "message"))
+  end
+
+  test "show returns unauthorized when the user is not logged in" do
+    sign_out :user
+
+    get :show, params: { id: channels(:one).id }, as: :json
+
+    assert_response :unauthorized
+    assert_json_error(code: "authentication_error", message: "You need to sign in or sign up before continuing.")
   end
 end

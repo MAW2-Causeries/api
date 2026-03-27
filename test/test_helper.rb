@@ -2,6 +2,7 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
 require "json"
+require "devise"
 
 module SecureRandom
   class << self
@@ -25,5 +26,14 @@ module ActiveSupport
     def json_body
       ::JSON.parse(response.body)
     end
+
+    def assert_json_error(code:, message:)
+      assert_equal code, json_body.dig("error", "code")
+      assert_equal message, json_body.dig("error", "message")
+    end
   end
+end
+
+class ActionController::TestCase
+  include Devise::Test::ControllerHelpers
 end

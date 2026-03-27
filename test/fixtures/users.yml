@@ -1,30 +1,29 @@
-<% password_digest = BCrypt::Password.create("test") %>
-
+<% encrypted_password = Devise::Encryptor.digest(User, "test") %>
 
 one:
   id: 500a75db-1486-4719-bbb8-776e4cbebde1
   email: test@test.com
   username: blablabla
-  password_digest: <%= password_digest %>
-  profile_picture_path: default_profile_pic.png
+  encrypted_password: <%= encrypted_password %>
+  jti: 500a75db-1486-4719-bbb8-776e4cbebde1
 
 two:
   id: 501a75db-1486-4719-bbb8-776e4cbebde1
   email: teste@test.com
   username: blablablae
-  password_digest: <%= password_digest %>
-  profile_picture_path: default_profile_pic.png
+  encrypted_password: <%= encrypted_password %>
+  jti: 501a75db-1486-4719-bbb8-776e4cbebde1
 
 three:
   id: 502a75db-1486-4719-bbb8-776e4cbebde1
   email: testeing@test.com
   username: blablablaeee
-  password_digest: <%= password_digest %>
-  profile_picture_path: default_profile_pic.png
+  encrypted_password: <%= encrypted_password %>
+  jti: 502a75db-1486-4719-bbb8-776e4cbebde1
 
 four:
   id: 503a75db-1486-4719-bbb8-776e4cbebde1
   email: testeing@testion.com
   username: blabooblo
-  password_digest: <%= password_digest %>
-  profile_picture_path: default_profile_pic.png
+  encrypted_password: <%= encrypted_password %>
+  jti: 503a75db-1486-4719-bbb8-776e4cbebde1
