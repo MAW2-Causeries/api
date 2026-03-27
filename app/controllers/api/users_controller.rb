@@ -1,7 +1,8 @@
 module Api
   class UsersController < BaseController
     skip_before_action :authenticate_api_user!, only: :create
-    before_action :set_user, only: %i[show update destroy]
+    before_action :set_user, only: %i[show update destroy channels]
+    before_action :only_current_user!, only: %i[update destroy]
 
     def index
       users = User.all
@@ -27,13 +28,18 @@ module Api
       head :ok
     end
 
+    def channels
+      render json: @user.channels.as_json, status: :ok
+    end
+
     private
 
     def set_user
       @user = User.find_by!(id: params[:id])
-      if @user != current_user
-        head :forbidden
-      end
+    end
+
+    def only_current_user!
+      head :forbidden unless @user == current_user
     end
 
     def create_user_params

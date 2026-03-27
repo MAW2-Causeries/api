@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     get "channels/:id/users", to: "channels#users", as: :channel_users
     get "guilds/:id/channels", to: "guilds#channels", as: :guild_channels
     get "guilds/:id/members", to: "guilds#members", as: :guild_members
+    get "channels/:id/users/:user_id", to: "channels#user", as: :channel_user
+    get "users/:id/channels", to: "users#channels", as: :user_channels
 
     match "*path", to: "base#route_not_found", via: :all
   end

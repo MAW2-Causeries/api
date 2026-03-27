@@ -77,6 +77,14 @@ module Api
       render json: @channel.users.as_json, status: :ok
     end
 
+    def user
+      set_channel
+      authorize_channel_access!
+
+      user = @channel.users.find_by!(id: params[:user_id])
+      render json: user.as_json, status: :ok
+    end
+
     private
 
     def update_channel_params
