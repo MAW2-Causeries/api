@@ -29,16 +29,12 @@ class ChannelTest < ActiveSupport::TestCase
   test "serializes the public fields only" do
     payload = channels(:two).as_json
 
-    assert_equal %w[description id name type], payload.keys.sort
+    assert_equal %w[description id name type users], payload.keys.sort
     assert_equal "DMChannel", payload["type"]
   end
 
   test "dm channel serialization includes users under a string key" do
-    channel = DMChannel.create!(
-      name: "private",
-      type: "DMChannel",
-      users: [ users(:one), users(:two) ]
-    )
+    channel = channels(:two)
 
     payload = channel.as_json
 
@@ -64,7 +60,7 @@ class ChannelTest < ActiveSupport::TestCase
     channel = DMChannel.new(
       name: "private",
       type: "DMChannel",
-      users: [ users(:one), users(:two) ]
+      users: [ users(:one), users(:three) ]
     )
 
     assert channel.valid?

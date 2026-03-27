@@ -1,7 +1,7 @@
 require "test_helper"
 
-class Api::GuildsControllerTest < ActionController::TestCase
-  tests Api::GuildsController
+class Api::V1::GuildsControllerTest < ActionController::TestCase
+  tests Api::V1::GuildsController
 
   setup do
     @request.env["devise.mapping"] = Devise.mappings[:user]
@@ -53,8 +53,6 @@ class Api::GuildsControllerTest < ActionController::TestCase
   end
 
   test "channels returns the guild channels for a member" do
-    guilds(:one).members << users(:one)
-
     get :channels, params: { id: guilds(:one).id }, as: :json
 
     assert_response :ok
@@ -63,7 +61,6 @@ class Api::GuildsControllerTest < ActionController::TestCase
 
   test "members returns the guild members for an authorized user" do
     guild = guilds(:one)
-    guild.members << users(:one)
     guild.members << users(:two)
 
     get :members, params: { id: guild.id }, as: :json

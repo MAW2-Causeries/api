@@ -1,16 +1,12 @@
 require "test_helper"
 
-class Api::ChannelsControllerTest < ActionController::TestCase
-  tests Api::ChannelsController
+class Api::V1::ChannelsControllerTest < ActionController::TestCase
+  tests Api::V1::ChannelsController
 
   setup do
     @request.env["devise.mapping"] = Devise.mappings[:user]
     sign_in users(:one)
-    @accessible_dm_channel = DMChannel.create!(
-      name: "private-chat",
-      type: "DMChannel",
-      users: [ users(:one), users(:two) ]
-    )
+    @accessible_dm_channel = channels(:two)
   end
 
   test "show renders the serialized channel" do
@@ -73,8 +69,6 @@ class Api::ChannelsControllerTest < ActionController::TestCase
   end
 
   test "destroy removes a text channel for the guild owner" do
-    guilds(:one).members << users(:one)
-
     assert_difference("Channel.count", -1) do
       delete :destroy, params: { id: channels(:one).id }, as: :json
     end
@@ -83,7 +77,6 @@ class Api::ChannelsControllerTest < ActionController::TestCase
   end
 
   test "destroy returns not found for a non-owner" do
-    guilds(:one).members << users(:one)
     sign_out :user
     sign_in users(:two)
 

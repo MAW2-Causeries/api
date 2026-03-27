@@ -1,7 +1,7 @@
 require "test_helper"
 
-class Api::UsersControllerTest < ActionController::TestCase
-  tests Api::UsersController
+class Api::V1::UsersControllerTest < ActionController::TestCase
+  tests Api::V1::UsersController
 
   setup do
     @request.env["devise.mapping"] = Devise.mappings[:user]
