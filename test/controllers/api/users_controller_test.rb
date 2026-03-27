@@ -63,4 +63,18 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
     assert_response :unauthorized
     assert_json_error(code: "authentication_error", message: "You need to sign in or sign up before continuing.")
   end
+
+  test "show bypasses jwt authentication for configured hosts" do
+    previous_hosts = ENV["API_JWT_BYPASS_HOSTS"]
+    ENV["API_JWT_BYPASS_HOSTS"] = "trusted.local"
+    sign_out :user
+    @request.host = "trusted.local"
+
+    get :show, params: { id: users(:one).id }, as: :json
+
+    assert_response :ok
+    assert_equal users(:one).username, json_body["username"]
+  ensure
+    ENV["API_JWT_BYPASS_HOSTS"] = previous_hosts
+  end
 end

@@ -17,6 +17,10 @@ bundle # it will install the gems specified in the Gemfile
 rails db:migrate # it will run the database migrations
 ```
 
+Environment variables:
+
+- `API_JWT_BYPASS_HOSTS`: comma-separated list of request hosts allowed to skip the API JWT authentication check. Example: `trusted.local,api.internal.local`
+
 ### On dev environment
 
 #### Local deployment
