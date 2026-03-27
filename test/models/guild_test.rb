@@ -31,11 +31,11 @@ class GuildTest < ActiveSupport::TestCase
     guild = guilds(:one)
     member = users(:two)
 
-    assert_difference("guild.users.count", 1) do
-      guild.users << member
+    assert_difference("guild.members.count", 1) do
+      guild.members << member
     end
 
-    assert_includes guild.users.reload, member
+    assert_includes guild.members.reload, member
   end
 
   test "exposes owner and creator associations" do

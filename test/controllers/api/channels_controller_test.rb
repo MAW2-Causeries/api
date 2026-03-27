@@ -20,6 +20,13 @@ class Api::ChannelsControllerTest < ActionController::TestCase
     assert_equal @accessible_dm_channel.name, json_body["name"]
   end
 
+  test "users returns the channel users for an authorized member" do
+    get :users, params: { id: @accessible_dm_channel.id }, as: :json
+
+    assert_response :ok
+    assert_equal [ users(:one).id, users(:two).id ].sort, json_body.map { |user| user["id"] }.sort
+  end
+
   test "create returns invalid channel type for missing type" do
     post :create, params: {
       name: "new-channel",
@@ -63,6 +70,27 @@ class Api::ChannelsControllerTest < ActionController::TestCase
     assert_response :not_found
     assert_equal "record_not_found", json_body.dig("error", "code")
     assert_match(/Couldn't find Channel/, json_body.dig("error", "message"))
+  end
+
+  test "destroy removes a text channel for the guild owner" do
+    guilds(:one).members << users(:one)
+
+    assert_difference("Channel.count", -1) do
+      delete :destroy, params: { id: channels(:one).id }, as: :json
+    end
+
+    assert_response :no_content
+  end
+
+  test "destroy returns not found for a non-owner" do
+    guilds(:one).members << users(:one)
+    sign_out :user
+    sign_in users(:two)
+
+    delete :destroy, params: { id: channels(:one).id }, as: :json
+
+    assert_response :not_found
+    assert_equal "record_not_found", json_body.dig("error", "code")
   end
 
   test "show returns unauthorized when the user is not logged in" do

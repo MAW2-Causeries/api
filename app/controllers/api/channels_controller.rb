@@ -46,7 +46,7 @@ module Api
       render json: channel.as_json, status: :created
     rescue ActiveRecord::RecordInvalid => e
       if e.record.errors[:users].any?
-        channel = DMChannel.between_users([ current_user.id, user_id ])
+        channel = DMChannel.between_users(current_user, User.find_by(id: user_id))
         render json: channel.as_json, status: :ok
       else
         render json: { error: e.message }, status: :unprocessable_entity
@@ -61,9 +61,20 @@ module Api
     end
 
     def destroy
-      Channel.find_by!(id: params[:id]).destroy
+      set_channel
+      can_destroy = @channel.instance_of?(TextChannel) && @channel.guild.owner == current_user
+      raise ActiveRecord::RecordNotFound unless can_destroy
+
+      @channel.destroy
 
       head :no_content
+    end
+
+    def users
+      set_channel
+      authorize_channel_access!
+
+      render json: @channel.users.as_json, status: :ok
     end
 
     private
@@ -85,7 +96,7 @@ module Api
     end
 
     def authorize_channel_access!
-      unless @channel.users.include?(current_user) || @channel.guild&.members&.exists?(user_id: current_user.id)
+      unless @channel.users.include?(current_user) || @channel.guild&.members&.exists?(id: current_user.id)
         raise ActiveRecord::RecordNotFound
       end
     end

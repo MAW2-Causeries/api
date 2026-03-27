@@ -18,7 +18,7 @@ module Api
 
       guild.owner = current_api_user
       guild.creator = current_api_user
-      guild.users << current_api_user
+      guild.members << current_api_user
 
       guild.save!
       render json: guild.as_json, status: :created
@@ -40,6 +40,20 @@ module Api
       head :no_content
     end
 
+    def channels
+      set_guild
+      return unless can_access_guild?(@guild)
+
+      render json: @guild.channels.as_json, status: :ok
+    end
+
+    def members
+      set_guild
+      return unless can_access_guild?(@guild)
+
+      render json: @guild.members.as_json, status: :ok
+    end
+
     private
 
     def only_guild_owner
@@ -58,7 +72,7 @@ module Api
     end
 
     def can_access_guild?(guild)
-      return true if guild.users.include?(current_api_user) || guild.owner == current_api_user
+      return true if guild.members.include?(current_api_user) || guild.owner == current_api_user
 
       render_error("You don't have access to this guild", status: :forbidden, code: "forbidden")
       false

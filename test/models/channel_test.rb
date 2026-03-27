@@ -57,6 +57,27 @@ class ChannelTest < ActiveSupport::TestCase
     assert channel.valid?
   end
 
+  test "dm channels require two distinct users" do
+    channel = DMChannel.new(
+      name: "private",
+      type: "DMChannel",
+      users: [ users(:one), users(:one) ]
+    )
+
+    assert_not channel.valid?
+    assert_includes channel.errors[:users], "must be different users"
+  end
+
+  test "between_users finds an existing dm regardless of order" do
+    channel = DMChannel.create!(
+      name: "private",
+      type: "DMChannel",
+      users: [ users(:three), users(:four) ]
+    )
+
+    assert_equal channel, DMChannel.between_users(users(:four), users(:three))
+  end
+
   private
 
   def build_channel(overrides = {})

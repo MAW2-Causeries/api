@@ -10,6 +10,9 @@ Rails.application.routes.draw do
     resources :users, only: %i[show update create destroy index]
     resources :guilds, only: %i[show create update destroy index]
     resources :channels, only: %i[show create update destroy index]
+    get "channels/:id/users", to: "channels#users", as: :channel_users
+    get "guilds/:id/channels", to: "guilds#channels", as: :guild_channels
+    get "guilds/:id/members", to: "guilds#members", as: :guild_members
 
     match "*path", to: "base#route_not_found", via: :all
   end

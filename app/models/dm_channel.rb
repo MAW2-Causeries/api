@@ -5,8 +5,10 @@ class DMChannel < Channel
     association_foreign_key: :user_id
 
   validates :guild_id, absence: true
-  validates :users, length: { is: 2 }, if: -> { guild_id.blank? }
-  validate :unique_user_pair, if: -> { guild_id.blank? && user_ids.uniq.size == 2 }
+  validates :users, length: { is: 2 }
+
+  validate :unique_user_pair, if: -> { user_ids.uniq.size == 2 }
+  validate :users_must_be_different
 
   def as_json
     json = super(only: [ :id, :name, :description, :type ])
@@ -18,8 +20,12 @@ class DMChannel < Channel
     json
   end
 
-  scope :between_users, ->(users) {
-    joins(:users).where(users: { id: users }).first
+  scope :between_users, ->(user1, user2) {
+    joins(:users)
+      .where(users: { id: [ user1.id, user2.id ] })
+      .group("channels.id")
+      .having("COUNT(DISTINCT users.id) = 2")
+      .first
   }
 
   before_validation :set_default_name, on: :create
@@ -42,5 +48,9 @@ class DMChannel < Channel
     return unless duplicate_exists
 
     errors.add(:users, "pair already has a DM channel with this user")
+  end
+
+  def users_must_be_different
+    errors.add(:users, "must be different users") if user_ids.uniq.size != 2
   end
 end
