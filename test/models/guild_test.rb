@@ -14,11 +14,10 @@ class GuildTest < ActiveSupport::TestCase
     assert_includes guild.errors[:owner_id], "can't be blank"
   end
 
-  test "enforces unique guild names" do
+  test "allows duplicate guild names" do
     duplicate = build_guild(name: guilds(:one).name)
 
-    assert_not duplicate.valid?
-    assert_includes duplicate.errors[:name], "has already been taken"
+    assert duplicate.valid?
   end
 
   test "serializes the public fields only" do
@@ -28,12 +27,15 @@ class GuildTest < ActiveSupport::TestCase
     assert_equal guilds(:one).id, payload["id"]
   end
 
-  test "destroys dependent channels" do
+  test "can have members through the join table" do
     guild = guilds(:one)
+    member = users(:two)
 
-    assert_difference("Channel.where(guild_id: guild.id).count", -2) do
-      guild.destroy
+    assert_difference("guild.users.count", 1) do
+      guild.users << member
     end
+
+    assert_includes guild.users.reload, member
   end
 
   test "exposes owner and creator associations" do

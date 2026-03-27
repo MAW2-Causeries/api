@@ -36,7 +36,7 @@ class Api::GuildsControllerTest < ActionController::TestCase
     assert_match(/Name can't be blank/, json_body.dig("error", "message"))
   end
 
-  test "update returns validation errors for duplicate guild names" do
+  test "update allows duplicate guild names for the guild owner" do
     sign_out :user
     sign_in users(:two)
 
@@ -47,8 +47,8 @@ class Api::GuildsControllerTest < ActionController::TestCase
       owner_id: guilds(:two).owner_id
     }, as: :json
 
-    assert_response :unprocessable_entity
-    assert_json_error(code: "record_invalid", message: "Name has already been taken")
+    assert_response :ok
+    assert_equal guilds(:one).name, guilds(:two).reload.name
   end
 
   test "show returns unauthorized when the user is not logged in" do

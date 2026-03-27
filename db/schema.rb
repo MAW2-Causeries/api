@@ -36,8 +36,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_26_180200) do
     t.string "owner_id", limit: 36, null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_guilds_on_creator_id"
-    t.index ["name"], name: "index_guilds_on_name", unique: true
+    t.index ["name"], name: "index_guilds_on_name"
     t.index ["owner_id"], name: "index_guilds_on_owner_id"
+  end
+
+  create_table "guilds_users", id: false, force: :cascade do |t|
+    t.string "guild_id", limit: 36, null: false
+    t.string "user_id", limit: 36, null: false
+    t.index ["guild_id", "user_id"], name: "index_guilds_users_on_guild_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_guilds_users_on_user_id"
   end
 
   create_table "users", id: { type: :string, limit: 36 }, force: :cascade do |t|

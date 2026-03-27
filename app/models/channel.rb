@@ -2,7 +2,6 @@ class Channel < ApplicationRecord
   include HasUuid
   before_validation :normalize_name
   attribute :description, :string, default: ""
-  belongs_to :guild, foreign_key: :guild_id, primary_key: :id, optional: true
 
   def reformatted_name
     self.name.gsub(" ", "-").gsub(/[^0-9A-Za-z\s]/, "").downcase

@@ -41,7 +41,7 @@ class ChannelTest < ActiveSupport::TestCase
   end
 
   test "private channels cannot belong to a guild" do
-    channel = DMChannel.new(name: "private", type: "DMChannel", guild: guilds(:one))
+    channel = DMChannel.new(name: "private", type: "DMChannel", guild_id: guilds(:one).id)
 
     assert_not channel.valid?
     assert_includes channel.errors[:guild_id], "must be blank"

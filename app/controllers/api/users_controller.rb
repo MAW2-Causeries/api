@@ -3,6 +3,11 @@ module Api
     skip_before_action :authenticate_api_user!, only: :create
     before_action :set_user, only: %i[show update destroy]
 
+    def index
+      users = User.all
+      render json: users.as_json, status: :ok
+    end
+
     def show
       render json: @user.as_json, status: :ok
     end

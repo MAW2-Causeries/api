@@ -7,8 +7,8 @@ Rails.application.routes.draw do
       delete :sessions, to: "sessions#destroy", defaults: { id: nil } # obligate to separate to default id into nil
     end
 
-    resources :users, only: %i[show update create destroy]
-    resources :guilds, only: %i[show create update destroy]
+    resources :users, only: %i[show update create destroy index]
+    resources :guilds, only: %i[show create update destroy index]
     resources :channels, only: %i[show create update destroy index]
 
     match "*path", to: "base#route_not_found", via: :all

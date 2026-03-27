@@ -8,11 +8,16 @@ class CreateGuilds < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :guilds, :name, unique: true
+    add_index :guilds, :name
     add_index :guilds, :owner_id
     add_index :guilds, :creator_id
 
     add_foreign_key :guilds, :users, column: :owner_id, primary_key: :id
     add_foreign_key :guilds, :users, column: :creator_id, primary_key: :id
+
+    create_join_table :guilds, :users, column_options: { type: :string, limit: 36 } do |t|
+      t.index [ :guild_id, :user_id ], unique: true
+      t.index :user_id
+    end
   end
 end
