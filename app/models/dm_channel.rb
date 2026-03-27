@@ -14,8 +14,8 @@ class DMChannel < Channel
     json = super(only: [ :id, :name, :description, :type ])
 
     for user in users
-      json[:users] ||= []
-      json[:users] << user.as_json
+      json["users"] ||= []
+      json["users"] << user.as_json
     end
     json
   end

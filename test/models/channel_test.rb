@@ -33,6 +33,19 @@ class ChannelTest < ActiveSupport::TestCase
     assert_equal "DMChannel", payload["type"]
   end
 
+  test "dm channel serialization includes users under a string key" do
+    channel = DMChannel.create!(
+      name: "private",
+      type: "DMChannel",
+      users: [ users(:one), users(:two) ]
+    )
+
+    payload = channel.as_json
+
+    assert_includes payload.keys, "users"
+    assert_equal [ users(:one).id, users(:two).id ].sort, payload["users"].map { |user| user["id"] }.sort
+  end
+
   test "text channels require a guild" do
     channel = TextChannel.new(name: "general", type: "TextChannel")
 

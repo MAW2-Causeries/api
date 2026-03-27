@@ -9,7 +9,7 @@ class GroupChannel < Channel
   def as_json
     json = super(only: [ :id, :name, :description, :type ])
 
-    json[:users] = users.as_json
+    json["users"] = users.as_json
     json
   end
 
