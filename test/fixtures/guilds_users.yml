@@ -1,0 +1,11 @@
+guild_one_member_one:
+  guild_id: 600a75db-1486-4719-bbb8-776e4cbebde1
+  user_id: 500a75db-1486-4719-bbb8-776e4cbebde1
+
+guild_two_member_two:
+  guild_id: 601a75db-1486-4719-bbb8-776e4cbebde1
+  user_id: 501a75db-1486-4719-bbb8-776e4cbebde1
+
+guild_three_member_four:
+  guild_id: 602a75db-1486-4719-bbb8-776e4cbebde1
+  user_id: 503a75db-1486-4719-bbb8-776e4cbebde1

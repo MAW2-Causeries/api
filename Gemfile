@@ -5,6 +5,7 @@ gem "rails", "~> 8.1.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use sqlite3 as the database for Active Record
+gem "sqlite3", ">= 2.1"
 gem "mysql2", "~> 0.5.7"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
@@ -22,8 +23,7 @@ gem "rubocop", "~> 1.81", ">= 1.81.7"
 gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
-
+gem "tzinfo-data"
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
 gem "solid_cache"
 gem "solid_queue"
@@ -68,6 +68,9 @@ end
 
 gem "dotenv-rails"
 gem "fiddle"
-gem "jwt", "~> 2.5"
+gem "devise"
+gem "devise-jwt"
 gem "rack-cors"
 gem "active_model_serializers", "~> 0.10.15"
+
+gem "date", "~> 3.5"

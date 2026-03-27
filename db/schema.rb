@@ -10,50 +10,59 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_17_074008) do
-  create_table "guilds", id: :string, charset: "utf8mb3", force: :cascade do |t|
-    t.string "banner_picture_path", null: false
+ActiveRecord::Schema[8.1].define(version: 2026_03_26_180200) do
+  create_table "channels", id: { type: :string, limit: 36 }, force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "creator_id", null: false
+    t.string "description"
+    t.string "guild_id", limit: 36
+    t.string "name", null: false
+    t.string "type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["guild_id"], name: "index_channels_on_guild_id"
+  end
+
+  create_table "channels_users", id: false, force: :cascade do |t|
+    t.string "channel_id", limit: 36, null: false
+    t.string "user_id", limit: 36, null: false
+    t.index ["channel_id"], name: "index_channels_users_on_channel_id"
+    t.index ["user_id"], name: "index_channels_users_on_user_id"
+  end
+
+  create_table "guilds", id: { type: :string, limit: 36 }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "creator_id", limit: 36, null: false
     t.string "description"
     t.string "name", null: false
-    t.string "owner_id", null: false
+    t.string "owner_id", limit: 36, null: false
     t.datetime "updated_at", null: false
-    t.index ["creator_id"], name: "fk_rails_bf778c79cf"
-    t.index ["owner_id"], name: "fk_rails_e5adc31fa8"
+    t.index ["creator_id"], name: "index_guilds_on_creator_id"
+    t.index ["name"], name: "index_guilds_on_name"
+    t.index ["owner_id"], name: "index_guilds_on_owner_id"
   end
 
-  create_table "roomTypes", id: :string, charset: "utf8mb3", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "description"
-    t.string "name", null: false
-    t.datetime "updated_at", null: false
+  create_table "guilds_users", id: false, force: :cascade do |t|
+    t.string "guild_id", limit: 36, null: false
+    t.string "user_id", limit: 36, null: false
+    t.index ["guild_id", "user_id"], name: "index_guilds_users_on_guild_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_guilds_users_on_user_id"
   end
 
-  create_table "rooms", id: :string, charset: "utf8mb3", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "description"
-    t.string "guild_id", null: false
-    t.string "room_type_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["guild_id"], name: "fk_rails_028d5e0dc2"
-    t.index ["room_type_id"], name: "fk_rails_f4fff90e9d"
-  end
-
-  create_table "users", id: :string, charset: "utf8mb3", force: :cascade do |t|
+  create_table "users", id: { type: :string, limit: 36 }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
-    t.string "password_digest", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "jti", default: "", null: false
     t.string "phone_number"
-    t.string "profile_picture_path", default: "default_profile_pic.png", null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "channels", "guilds"
+  add_foreign_key "channels_users", "channels"
+  add_foreign_key "channels_users", "users"
   add_foreign_key "guilds", "users", column: "creator_id"
   add_foreign_key "guilds", "users", column: "owner_id"
-  add_foreign_key "rooms", "guilds"
-  add_foreign_key "rooms", "roomTypes", column: "room_type_id"
 end
