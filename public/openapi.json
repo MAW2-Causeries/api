@@ -638,6 +638,32 @@
           }
         }
       }
+    },
+    "/api/v1/ws": {
+      "get": {
+        "tags": [
+          "Realtime"
+        ],
+        "summary": "Open the realtime websocket",
+        "description": "Upgrades the authenticated HTTP connection to a websocket. Once connected, the server pushes newly created messages for channels the authenticated user belongs to.",
+        "operationId": "openWebsocket",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "101": {
+            "description": "Switching Protocols to websocket"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "description": "Websocket upgrade failed"
+          }
+        }
+      }
     }
   },
   "components": {
