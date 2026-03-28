@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   devise_for :users, skip: :all
 
+  scope :api do
+    get :docs, to: "api/docs#show"
+    get "openapi.json", to: "api/docs#openapi", defaults: { format: :json }
+  end
+
   namespace :api, defaults: { format: :json } do
     scope :v1, module: :v1, as: :v1 do
       devise_scope :user do

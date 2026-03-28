@@ -1,0 +1,881 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Causerie API",
+    "version": "1.0.0",
+    "description": "OpenAPI documentation for the Causerie Rails API."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Current host"
+    }
+  ],
+  "tags": [
+    { "name": "Sessions" },
+    { "name": "Users" },
+    { "name": "Guilds" },
+    { "name": "Channels" },
+    { "name": "Guild Invites" }
+  ],
+  "paths": {
+    "/api/v1/sessions": {
+      "post": {
+        "tags": ["Sessions"],
+        "summary": "Create a session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SessionCreateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SessionResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Sessions"],
+        "summary": "Fetch the current user from a JWT",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Current user",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Sessions"],
+        "summary": "Destroy the current session",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Signed out successfully"
+          },
+          "401": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "List users",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserCreateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User created"
+          },
+          "422": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Fetch a user",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "200": {
+            "description": "User details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Update a user",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserUpdateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated user",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete a user",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "200": {
+            "description": "Deleted successfully"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}/channels": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "List a user's channels",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "200": {
+            "description": "Channels list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Channel" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/guilds": {
+      "get": {
+        "tags": ["Guilds"],
+        "summary": "List guilds for the current user",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Guilds list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Guild" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Guilds"],
+        "summary": "Create a guild",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GuildCreateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created guild",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Guild" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/guilds/{id}": {
+      "get": {
+        "tags": ["Guilds"],
+        "summary": "Fetch a guild",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "200": {
+            "description": "Guild details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Guild" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Guilds"],
+        "summary": "Update a guild",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GuildUpdateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated guild",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Guild" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Guilds"],
+        "summary": "Delete a guild",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/v1/guilds/{id}/channels": {
+      "get": {
+        "tags": ["Guilds"],
+        "summary": "List channels in a guild",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "200": {
+            "description": "Channels list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Channel" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/guilds/{id}/members": {
+      "get": {
+        "tags": ["Guilds"],
+        "summary": "List guild members",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "200": {
+            "description": "Members list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/guilds/{id}/invite": {
+      "post": {
+        "tags": ["Guilds"],
+        "summary": "Create a guild invite",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "201": {
+            "description": "Invite created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GuildInvite" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/guild_invites/{token}/join": {
+      "post": {
+        "tags": ["Guild Invites"],
+        "summary": "Join a guild from an invite token",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/TokenPathParam" }],
+        "responses": {
+          "200": {
+            "description": "Already a member",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GuildInviteJoinResponse" }
+              }
+            }
+          },
+          "201": {
+            "description": "Joined successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GuildInviteJoinResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/channels": {
+      "get": {
+        "tags": ["Channels"],
+        "summary": "List channels for the current user",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Channels list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Channel" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Channels"],
+        "summary": "Create a channel",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChannelCreateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Existing direct message channel returned"
+          },
+          "201": {
+            "description": "Channel created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Channel" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid channel type",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/channels/{id}": {
+      "get": {
+        "tags": ["Channels"],
+        "summary": "Fetch a channel",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "200": {
+            "description": "Channel details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Channel" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Channels"],
+        "summary": "Update a channel",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChannelUpdateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated channel",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Channel" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Channels"],
+        "summary": "Delete a text channel",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/v1/channels/{id}/users": {
+      "get": {
+        "tags": ["Channels"],
+        "summary": "List users in a channel",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/IdPathParam" }],
+        "responses": {
+          "200": {
+            "description": "Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/channels/{id}/users/{user_id}": {
+      "get": {
+        "tags": ["Channels"],
+        "summary": "Fetch a specific user from a channel",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/IdPathParam" },
+          { "$ref": "#/components/parameters/UserIdPathParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/channels/{channelID}/messages": {
+      "get": {
+        "tags": ["Messages"],
+        "summary": "List messages in a channel",
+        "description": "Returns paginated messages from a channel using the optional limit and page query parameters.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/ChannelIdPathParam" },
+          { "$ref": "#/components/parameters/LimitQueryParam" },
+          { "$ref": "#/components/parameters/PageQueryParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Messages for the requested page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Message" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Messages"],
+        "summary": "Create a message",
+        "description": "Creates a new message in the given channel. The authenticated user becomes the author.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/ChannelIdPathParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateMessageRequest" }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": { "$ref": "#/components/schemas/CreateMessageRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Message created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Message" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/channels/{channelID}/messages/{messageID}": {
+      "get": {
+        "tags": ["Messages"],
+        "summary": "Get a single message",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/ChannelIdPathParam" },
+          { "$ref": "#/components/parameters/MessageIdPathParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Message found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Message" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "IdPathParam": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "UserIdPathParam": {
+        "name": "user_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ChannelIdPathParam": {
+        "name": "channelID",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "MessageIdPathParam": {
+        "name": "messageID",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "LimitQueryParam": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 50
+        }
+      },
+      "PageQueryParam": {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "TokenPathParam": {
+        "name": "token",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": ["id", "email", "username"],
+        "properties": {
+          "id": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "username": { "type": "string" }
+        }
+      },
+      "Guild": {
+        "type": "object",
+        "required": ["id", "name", "owner_id", "description"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "owner_id": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "Channel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "type": { "type": "string" },
+          "guild_id": {
+            "type": ["string", "null"]
+          }
+        },
+        "additionalProperties": true
+      },
+      "GuildInvite": {
+        "type": "object",
+        "required": ["id", "guild_id", "creator_id", "token", "active", "created_at", "updated_at", "invite_url"],
+        "properties": {
+          "id": { "type": "string" },
+          "guild_id": { "type": "string" },
+          "creator_id": { "type": "string" },
+          "token": { "type": "string" },
+          "active": { "type": "boolean" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" },
+          "invite_url": { "type": "string" }
+        }
+      },
+      "SessionCreateRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "format": "password" }
+        }
+      },
+      "SessionResponse": {
+        "type": "object",
+        "required": ["user", "token"],
+        "properties": {
+          "user": { "$ref": "#/components/schemas/User" },
+          "token": { "type": "string" }
+        }
+      },
+      "UserCreateRequest": {
+        "type": "object",
+        "required": ["email", "password", "username"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "format": "password" },
+          "username": { "type": "string" }
+        }
+      },
+      "UserUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "password": { "type": "string", "format": "password" },
+          "username": { "type": "string" }
+        }
+      },
+      "GuildCreateRequest": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "GuildUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "owner_id": { "type": "string" }
+        }
+      },
+      "ChannelCreateRequest": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["dm", "DMChannel", "group", "GroupChannel", "text", "TextChannel"]
+          },
+          "user_id": { "type": "string" },
+          "guild_id": { "type": "string" },
+          "user_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "ChannelUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "CreateMessageRequest": {
+        "type": "object",
+        "required": ["content"],
+        "properties": {
+          "content": { "type": "string" }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "required": ["id", "author_id", "channel_id", "content", "created_at", "updated_at"],
+        "properties": {
+          "id": { "type": "string" },
+          "author_id": { "type": "string" },
+          "channel_id": { "type": "string" },
+          "content": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" },
+          "deleted_at": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          }
+        }
+      },
+      "GuildInviteJoinResponse": {
+        "type": "object",
+        "required": ["guild", "invite"],
+        "properties": {
+          "guild": { "$ref": "#/components/schemas/Guild" },
+          "invite": { "$ref": "#/components/schemas/GuildInvite" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
