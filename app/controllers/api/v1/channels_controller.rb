@@ -106,11 +106,11 @@ module Api
 
       def authorize_channel_access!
         current_user_is_nils = current_user.nil?
-        user_in_channel = @channel.users.include?(current_user)
-        user_in_guild = @channel.respond_to?(:guild) && @channel.guild&.members&.exists?(id: current_user.id)
-        if current_user_is_nils || (!user_in_channel && !user_in_guild)
+        if current_user_is_nils
           return
         end
+        user_in_channel = @channel.users.include?(current_user)
+        user_in_guild = @channel.respond_to?(:guild) && @channel.guild&.members&.exists?(id: current_user.id)
 
         raise ActiveRecord::RecordNotFound unless current_user_is_nils || (user_in_channel || user_in_guild)
       end
