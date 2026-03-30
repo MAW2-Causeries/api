@@ -82,17 +82,31 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
     assert_json_error(code: "authentication_error", message: "You need to sign in or sign up before continuing.")
   end
 
-  test "show bypasses jwt authentication for configured hosts" do
-    previous_hosts = ENV["API_JWT_BYPASS_HOSTS"]
-    ENV["API_JWT_BYPASS_HOSTS"] = "trusted.local"
+  test "show bypasses user authentication with a valid master secret token" do
+    previous_token = ENV["MASTER_SECRET_TOKEN"]
+    ENV["MASTER_SECRET_TOKEN"] = "top-secret-token"
     sign_out :user
-    @request.host = "trusted.local"
+    @request.headers["X-Master-Secret-Token"] = "top-secret-token"
 
     get :show, params: { id: users(:one).id }, as: :json
 
     assert_response :ok
     assert_equal users(:one).username, json_body["username"]
   ensure
-    ENV["API_JWT_BYPASS_HOSTS"] = previous_hosts
+    ENV["MASTER_SECRET_TOKEN"] = previous_token
+  end
+
+  test "show rejects an invalid master secret token" do
+    previous_token = ENV["MASTER_SECRET_TOKEN"]
+    ENV["MASTER_SECRET_TOKEN"] = "top-secret-token"
+    sign_out :user
+    @request.headers["X-Master-Secret-Token"] = "wrong-token"
+
+    get :show, params: { id: users(:one).id }, as: :json
+
+    assert_response :unauthorized
+    assert_json_error(code: "authentication_error", message: "You need to sign in or sign up before continuing.")
+  ensure
+    ENV["MASTER_SECRET_TOKEN"] = previous_token
   end
 end

@@ -13,13 +13,14 @@ This project is a Ruby on Rails API designed to manage messages for the Causerie
 ### Configuration
 
 ```shell
+cp .env.exemple .env # create local environment variables
 bundle # it will install the gems specified in the Gemfile
 rails db:migrate # it will run the database migrations
 ```
 
-Environment variables:
-
-- `API_JWT_BYPASS_HOSTS`: comma-separated list of request hosts allowed to skip the API JWT authentication check. Example: `trusted.local,api.internal.local`
+Required environment variables:
+- `JWT_SECRET`: secret used to sign JWT tokens
+- `MASTER_SECRET_TOKEN`: shared master secret token that bypasses user authentication when sent in the `X-Master-Secret-Token` header
 
 ### On dev environment
 

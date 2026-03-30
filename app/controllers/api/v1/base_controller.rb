@@ -18,7 +18,7 @@ module Api
       private
 
       def authenticate_api_user!
-        return if current_api_user || jwt_bypass_host?
+        return if current_api_user || valid_master_secret_token?
 
         render_error("You need to sign in or sign up before continuing.", status: :unauthorized, code: "authentication_error")
       end
@@ -27,17 +27,14 @@ module Api
         @current_api_user ||= warden.authenticate(scope: :user)
       end
 
-      def jwt_bypass_host?
-        configured_jwt_bypass_hosts.any? do |configured_host|
-          configured_host.casecmp?(request.host) || configured_host.casecmp?(request.host_with_port)
-        end
-      end
+      def valid_master_secret_token?
+        configured_master_secret_token = ENV["MASTER_SECRET_TOKEN"].to_s
+        provided_master_secret_token = request.headers["X-Master-Secret-Token"].to_s
 
-      def configured_jwt_bypass_hosts
-        ENV.fetch("API_JWT_BYPASS_HOSTS", "")
-          .split(",")
-          .map(&:strip)
-          .reject(&:empty?)
+        return false if configured_master_secret_token.empty? || provided_master_secret_token.empty?
+        return false unless configured_master_secret_token.bytesize == provided_master_secret_token.bytesize
+
+        ActiveSupport::SecurityUtils.fixed_length_secure_compare(configured_master_secret_token, provided_master_secret_token)
       end
 
       def render_error(message, status:, code:)
